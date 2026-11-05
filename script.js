@@ -1,3 +1,24 @@
+// 1. Імпортуємо необхідні модулі Firebase (ТІЛЬКИ з цих посилань)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+// 2. СЮДИ ВСТАВТЕ ВАШ СКОПІЙОВАНИЙ КОД (замініть цей блок на свій)
+const firebaseConfig = {
+  apiKey: "AIzaSyDbZ7ulyyTDtwifltQwVC3VrhFvDoyRobw",
+  authDomain: "volomap-57bea.firebaseapp.com",
+  projectId: "volomap-57bea",
+  storageBucket: "volomap-57bea.firebasestorage.app",
+  messagingSenderId: "1090207410336",
+  appId: "1:1090207410336:web:cc1d74b3eefe04d06041c5"
+};
+
+// 3. Запускаємо Firebase і підключаємо базу даних
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 4. Перевірка підключення
+console.log("Ура! Firebase підключено успішно!", db);
+
 // Автоматичне визначення поточної дати
 const now = new Date();
 const currentYear = now.getFullYear();
