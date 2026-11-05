@@ -295,7 +295,9 @@ function initHeroMap() {
 
   heroMap = L.map(el, {
     scrollWheelZoom: false   // щоб карта не перехоплювала прокрутку сторінки
+    zoomControl: false 
   }).setView([49.2331, 28.4682], 12);
+  L.control.zoom({ position: 'bottomright' }).addTo(heroMap)
 
   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     maxZoom: 19,
