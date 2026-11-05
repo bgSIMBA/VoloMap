@@ -1,84 +1,3 @@
-// 1. Імпортуємо необхідні модулі Firebase (ТІЛЬКИ з цих посилань)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
-
-// 2. СЮДИ ВСТАВТЕ ВАШ СКОПІЙОВАНИЙ КОД (замініть цей блок на свій)
-const firebaseConfig = {
-  apiKey: "AIzaSyDbZ7ulyyTDtwifltQwVC3VrhFvDoyRobw",
-  authDomain: "volomap-57bea.firebaseapp.com",
-  projectId: "volomap-57bea",
-  storageBucket: "volomap-57bea.firebasestorage.app",
-  messagingSenderId: "1090207410336",
-  appId: "1:1090207410336:web:cc1d74b3eefe04d06041c5"
-};
-
-// 3. Запускаємо Firebase і підключаємо базу даних
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// --- КОД ДЛЯ ВІДПРАВКИ ЗАЯВКИ НА ІНІЦІАТИВУ ---
-
-// 1. Знаходимо нашу форму за новим ID
-const applyForm = document.getElementById("apply-form");
-
-// Якщо форма є на сторінці, вішаємо на неї обробник подій
-if (applyForm) {
-  applyForm.addEventListener("submit", async (event) => {
-    // Зупиняємо перезавантаження сторінки
-    event.preventDefault(); 
-
-    // Знаходимо блоки для повідомлень та кнопку
-    const errorBox = document.getElementById("apply-error-box");
-    const successBox = document.getElementById("apply-success-box");
-    const submitBtn = applyForm.querySelector('button[type="submit"]');
-    const leadText = document.getElementById("apply-lead-text");
-
-    // 2. Збираємо дані з полів (звертаємось до ваших ID з HTML)
-    const name = document.getElementById("form-name").value;
-    const phone = document.getElementById("form-phone").value;
-    const email = document.getElementById("form-email").value;
-    const initiative = document.getElementById("form-initiative").value;
-    const city = document.getElementById("form-city").value;
-    const date = document.getElementById("form-date").value;
-    const address = document.getElementById("form-address").value;
-
-    try {
-      // Показуємо, що йде завантаження (щоб користувач не клікав двічі)
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Відправка...";
-      errorBox.style.display = "none";
-
-      // 3. Відправляємо дані у Firebase (в колекцію "applications")
-      await addDoc(collection(db, "applications"), {
-        volunteerName: name,
-        volunteerPhone: phone,
-        volunteerEmail: email,
-        initiativeTitle: initiative,
-        city: city,
-        initiativeDate: date,
-        initiativeAddress: address,
-        status: "registered", // Статус заявки 
-        appliedAt: new Date().toISOString() // Точний час подачі (поточний час)
-      });
-
-      // 4. Якщо все успішно — ховаємо форму і показуємо ВАШ блок успіху
-      applyForm.style.display = "none";
-      leadText.style.display = "none";
-      successBox.style.display = "block";
-
-    } catch (error) {
-      console.error("Помилка відправки заявки: ", error);
-      
-      // Показуємо ваш блок помилки
-      errorBox.textContent = "Сталася помилка при збереженні. Перевірте консоль.";
-      errorBox.style.display = "block";
-      
-      // Повертаємо кнопку до життя, щоб можна було спробувати ще раз
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Відправити заявку →";
-    }
-  });
-}
 
 // Автоматичне визначення поточної дати
 const now = new Date();
@@ -815,17 +734,44 @@ function updateSaveBtnState() {
   }
 }
 
-function handleFormSubmission(e) {
-  e.preventDefault();
+// Ця функція оновлює Особистий кабінет і показує успіх ПІСЛЯ відправки у Firebase
+window.onSuccessfulFirebaseSubmit = function() {
+  const target = document.getElementById('form-initiative').value;
+  const item = initiatives.find(i => i.id === selectedInitId) || initiatives[0];
 
-  const alreadyApplied = userApplications.some(app => app.initId === selectedInitId);
-  if (alreadyApplied) {
-    const errorBox = document.getElementById('apply-error-box');
-    errorBox.style.display = 'block';
-    errorBox.innerText = 'Ви вже подали заявку на цю ініціативу. Перевірте статус у кабінеті.';
-    setTimeout(() => errorBox.style.display = 'none', 3000);
-    return;
-  }
+  // Додаємо заявку в локальний список для Особистого кабінету
+  userApplications.unshift({
+    id: Date.now(),
+    title: target,
+    date: `${item.city} • Сьогодні`,
+    status: "Очікує",
+    img: item.image,
+    initId: selectedInitId
+  });
+  saveApplicationsToStorage(); 
+
+  // Нараховуємо 50 бонусів
+  userBonusCount += 50;
+  localStorage.setItem('volo_bonuses', userBonusCount);
+  document.querySelectorAll('#bonuses-live-val, #bonuses-live-val-public').forEach(el => el.innerText = userBonusCount);
+  
+  // Ховаємо форму, показуємо ваш блок "Дякуємо!"
+  document.getElementById("apply-form").style.display = "none";
+  document.getElementById("apply-lead-text").style.display = "none";
+  document.getElementById('apply-success-box').style.display = 'block';
+
+  // Через півтори секунди перекидаємо користувача в кабінет переглянути заявку
+  setTimeout(() => {
+    renderCabinetApps();
+    navigateTo('screen-cabinet');
+    switchCabTab('apps');
+    
+    // Повертаємо форму у початковий стан для наступних заявок
+    document.getElementById("apply-form").style.display = "block";
+    document.getElementById("apply-lead-text").style.display = "block";
+    document.getElementById('apply-success-box').style.display = 'none';
+  }, 1500);
+};
 
   const target = document.getElementById('form-initiative').value;
   const item = initiatives.find(i => i.id === selectedInitId) || initiatives[0];
