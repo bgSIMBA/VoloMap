@@ -163,62 +163,34 @@
         </div>
 
         <!-- NEW: Calendar Filter Widget -->
+                <!-- Віджет календаря з перемиканням місяців -->
         <div class="dropdown-widget" id="widget-date">
           <div class="filter-btn-f" onclick="toggleDropdownMenu('menu-date')">
             <div>
               <small>Дата</small>
-              <b id="label-date-val">Листопад 2025</b>
+              <b id="label-date-val">Оберіть дату</b>
             </div>
             <span>📅</span>
           </div>
           <div class="dropdown-popup-list" id="menu-date" style="padding: 16px; min-width: 280px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <button style="border:none; background:none; cursor:pointer;">&lt;</button>
-                <b style="font-size: 14px;">Листопад 2025</b>
-                <button style="border:none; background:none; cursor:pointer;">&gt;</button>
+                <button type="button" style="border:none; background:none; cursor:pointer; font-weight:900; font-size:16px; padding:4px 8px;" onclick="calPrevMonth(event)">&lt;</button>
+                <b id="cal-month-year-title" style="font-size: 14px;">Листопад 2026</b>
+                <button type="button" style="border:none; background:none; cursor:pointer; font-weight:900; font-size:16px; padding:4px 8px;" onclick="calNextMonth(event)">&gt;</button>
             </div>
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: var(--gray-muted);">
                 <span>Пн</span><span>Вв</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Нд</span>
             </div>
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 13px;" id="calendar-days-mock">
-                <!-- Mock calendar days for visual representation -->
-                <div style="color: #cbd5e1;">27</div><div style="color: #cbd5e1;">28</div><div style="color: #cbd5e1;">29</div><div style="color: #cbd5e1;">30</div><div style="color: #cbd5e1;">31</div><div>1</div><div>2</div>
-                <div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div>
-                <div style="background: var(--primary); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; cursor: pointer;">10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div>
-                <div>17</div><div>18</div><div>19</div><div>20</div><div>21</div><div>22</div><div>23</div>
-                <div>24</div><div>25</div><div>26</div><div>27</div><div>28</div><div>29</div><div>30</div>
             </div>
             <div style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;">
-                <button class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('Сьогодні')">Сьогодні</button>
-                <button class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('Цього тижня')">Цього тижня</button>
-                <button class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('Цього місяця')">Цього місяця</button>
+                <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('today')">Сьогодні</button>
+                <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('week')">Цього тижня</button>
+                <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('month')">Цього місяця</button>
             </div>
-            <button class="btn-coral" style="width: 100%; justify-content: center; padding: 10px; margin-top: 12px; font-size: 13px;" onclick="chooseDateFilter('Застосовано')">Застосувати</button>
+            <button type="button" class="btn-coral" style="width: 100%; justify-content: center; padding: 10px; margin-top: 12px; font-size: 13px;" onclick="chooseDateFilter('all')">Показати всі дати</button>
           </div>
         </div>
-
-        <div class="toggle-capsule">
-          <button class="toggle-cap-btn active" id="btn-fmt-all" onclick="chooseFormat('all')">Усі</button>
-          <button class="toggle-cap-btn" id="btn-fmt-online" onclick="chooseFormat('Онлайн')">Онлайн</button>
-          <button class="toggle-cap-btn" id="btn-fmt-offline" onclick="chooseFormat('Офлайн')">Офлайн</button>
-        </div>
-      </div>
-
-      <div class="map-split-box">
-        <div class="map-side-list" id="map-cards-list"></div>
-        <div class="map-visual-box">
-          <!-- КОНТЕЙНЕР ДЛЯ РЕАЛЬНОЇ КАРТИ LEAFLET -->
-          <div id="real-map-container" style="position: absolute; top:0; left:0; width: 100%; height: 100%; z-index: 1;"></div>
-          
-          <div style="position: absolute; top: 20px; right: 20px; background: var(--primary); color: white; width: 62px; height: 62px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-            200+ <span style="font-size: 8px;">ініціатив</span>
-          </div>
-          
-          <div style="position: absolute; bottom: 20px; background: rgba(255,255,255,0.95); padding: 8px 20px; border-radius: 99px; display: flex; gap: 20px; font-size: 12px; font-weight: 700; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            <span>❤️ Збір коштів</span><span>🤝 Допомога людям</span><span>🧠 Психологічна підтримка</span>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -657,7 +629,7 @@
           <div style="font-size: 32px; margin-bottom: 8px;">👥</div>
           <b>Запроси друга</b>
           <div style="color: var(--primary); font-weight: 800; margin: 4px 0 16px;">+50 бонусів</div>
-          <button class="btn-outline" style="padding: 8px 18px; font-size: 12px;" onclick="alert('Посилання скопійовано: volomap.ua/ref/angelina')">Скопіювати лінк</button>
+          <button class="btn-outline" style="padding: 8px 18px; font-size: 12px;" onclick="copyReferralLink(this)">Скопіювати лінк</button>
         </div>
       </div>
 

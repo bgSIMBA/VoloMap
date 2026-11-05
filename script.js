@@ -1,21 +1,35 @@
+// Автоматичне визначення поточної дати
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth();
+const currentDay = now.getDate();
+
+const monthNamesUa = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+
+// Генерація динамічних дат для ініціатив від поточного дня
+function getFutureDate(daysAhead) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+  const m = (d.getMonth() + 1) < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1);
+  return `${day}.${m}.${d.getFullYear()}`;
+}
+
 // БАЗА ДАНИХ ІНІЦІАТИВ
 const initiatives = [
-  { id: 1, title: "Допомога сім'ям з дітьми у Вінниці", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: "До 10.11.2025", difficulty: "Легко", image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500", address: "м. Вінниця, вул. Соборна, 25", coords: [49.232, 28.468] },
-  { id: 2, title: "Психологічна підтримка для постраждалих", category: "Психологічна підтримка", city: "Онлайн", format: "Онлайн", date: "До 15.11.2025", difficulty: "Середньо", image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500", address: "Дистанційно (Zoom / Meet)", coords: null }, // Онлайн - без піна
-  { id: 3, title: "Збір продуктів для ВПО", category: "Продукти", city: "Вінниця", format: "Офлайн", date: "До 12.11.2025", difficulty: "Легко", image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500", address: "м. Вінниця, Хмельницьке шосе, 14", coords: [49.238, 28.455] },
-  { id: 4, title: "Підтримка літніх людей у Вінниці", category: "Допомога людям", city: "Вінниця", format: "Офлайн", date: "До 20.11.2025", difficulty: "Складно", image: "https://images.unsplash.com/photo-1516307365426-bea591f05011?w=500", address: "м. Вінниця, вул. Келецька, 82", coords: [49.225, 28.420] },
-  { id: 5, title: "Прибирання територій після обстрілів", category: "Екологія", city: "Вінниця", format: "Офлайн", date: "До 22.11.2025", difficulty: "Середньо", image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500", address: "м. Вінниця, Замостянський район", coords: [49.245, 28.489] },
-  { id: 6, title: "Теплі речі для ВПО", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: "До 30.11.2025", difficulty: "Легко", image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=500", address: "м. Вінниця, вул. Пирогова, 47", coords: [49.229, 28.450] }
+  { id: 1, title: "Допомога сім'ям з дітьми у Вінниці", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(3)}`, targetDate: getFutureDate(3), difficulty: "Легко", image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500", address: "м. Вінниця, вул. Соборна, 25", coords: [49.232, 28.468] },
+  { id: 2, title: "Психологічна підтримка для постраждалих", category: "Психологічна підтримка", city: "Онлайн", format: "Онлайн", date: `До ${getFutureDate(5)}`, targetDate: getFutureDate(5), difficulty: "Середньо", image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500", address: "Дистанційно (Zoom / Meet)", coords: null },
+  { id: 3, title: "Збір продуктів для ВПО", category: "Продукти", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(7)}`, targetDate: getFutureDate(7), difficulty: "Легко", image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500", address: "м. Вінниця, Хмельницьке шосе, 14", coords: [49.238, 28.455] },
+  { id: 4, title: "Підтримка літніх людей у Вінниці", category: "Допомога людям", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(12)}`, targetDate: getFutureDate(12), difficulty: "Складно", image: "https://images.unsplash.com/photo-1516307365426-bea591f05011?w=500", address: "м. Вінниця, вул. Келецька, 82", coords: [49.225, 28.420] },
+  { id: 5, title: "Прибирання територій після обстрілів", category: "Екологія", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(15)}`, targetDate: getFutureDate(15), difficulty: "Середньо", image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500", address: "м. Вінниця, Замостянський район", coords: [49.245, 28.489] },
+  { id: 6, title: "Теплі речі для ВПО", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(20)}`, targetDate: getFutureDate(20), difficulty: "Легко", image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=500", address: "м. Вінниця, вул. Пирогова, 47", coords: [49.229, 28.450] }
 ];
 
 // Заявки
 let userApplications = [
-  { id: 1, title: "Допомога сім'ям з дітьми", date: "Вінниця • 10.11.2025", status: "Очікує", img: initiatives[0].image, initId: 1 },
-  { id: 2, title: "Збір продуктів для ВПО", date: "Вінниця • 12.11.2025", status: "Підтверджено", img: initiatives[2].image, initId: 3 },
-  { id: 3, title: "Психологічна підтримка", date: "Вінниця • 15.11.2025", status: "Підтверджено", img: initiatives[1].image, initId: 2 },
-  { id: 4, title: "Підтримка літніх людей", date: "Вінниця • 16.11.2025", status: "Очікує", img: initiatives[3].image, initId: 4 },
-  { id: 5, title: "Прибирання територій", date: "Вінниця • 22.11.2025", status: "Підтверджено", img: initiatives[4].image, initId: 5 },
-  { id: 6, title: "Теплі речі для ВПО", date: "Вінниця • 30.09.2025", status: "Завершено", img: initiatives[5].image, initId: 6 }
+  { id: 1, title: "Допомога сім'ям з дітьми", date: `Вінниця • ${getFutureDate(3)}`, status: "Очікує", img: initiatives[0].image, initId: 1 },
+  { id: 2, title: "Збір продуктів для ВПО", date: `Вінниця • ${getFutureDate(7)}`, status: "Підтверджено", img: initiatives[2].image, initId: 3 },
+  { id: 3, title: "Психологічна підтримка", date: `Вінниця • ${getFutureDate(5)}`, status: "Підтверджено", img: initiatives[1].image, initId: 2 }
 ];
 
 let savedFavIds = JSON.parse(localStorage.getItem('volo_favs')) || [1, 2, 3, 4, 6];
@@ -27,38 +41,43 @@ let selectedCity = 'Усі міста';
 let selectedCategory = 'Усі напрями';
 let selectedDiff = 'Будь-яка';
 let selectedFormat = 'all';
+let selectedDateMode = 'all';
+let selectedExactDate = null;
 
-// Реальна карта (Leaflet)
+// Календар
+let calViewYear = currentYear;
+let calViewMonth = currentMonth;
+
+// Карта Leaflet
 let leafletMap = null;
 let markersLayer = null;
 
-// ФУНКЦІЯ ОНОВЛЕННЯ ПРОФІЛЮ 
 function updateProfileDisplay() {
-    const user = JSON.parse(localStorage.getItem('currentUser')) || {
-        name: 'Ангеліна',
-        surname: 'Борецька',
-        email: 'angelina@gmail.com',
-        city: 'Вінниця',
-        bio: 'Студентка, допомагаю дітям та ВПО',
-        phone: '+380 (97) 123 45 67'
-    };
+  const user = JSON.parse(localStorage.getItem('currentUser')) || {
+    name: 'Ангеліна',
+    surname: 'Борецька',
+    email: 'angelina@gmail.com',
+    city: 'Вінниця',
+    bio: 'Студентка, допомагаю дітям та ВПО',
+    phone: '+380 (97) 123 45 67'
+  };
 
-    const initials = (user.name[0] + (user.surname[0] || '')).toUpperCase();
-    
-    if(document.getElementById('cab-profile-name')) {
-        document.getElementById('cab-profile-name').innerText = `${user.name} ${user.surname}`;
-        document.getElementById('cab-profile-email').innerText = user.email;
-        document.getElementById('cab-sidebar-avatar').innerText = initials;
-    }
-    if(document.getElementById('settings-avatar')) {
-        document.getElementById('settings-avatar').innerText = initials;
-        document.getElementById('set-name').value = user.name;
-        document.getElementById('set-surname').value = user.surname;
-        document.getElementById('set-email').value = user.email;
-        document.getElementById('set-city').value = user.city;
-        document.getElementById('set-bio').value = user.bio;
-        document.getElementById('set-phone').value = user.phone;
-    }
+  const initials = (user.name[0] + (user.surname ? user.surname[0] : '')).toUpperCase();
+
+  if (document.getElementById('cab-profile-name')) {
+    document.getElementById('cab-profile-name').innerText = `${user.name} ${user.surname}`;
+    document.getElementById('cab-profile-email').innerText = user.email;
+    document.getElementById('cab-sidebar-avatar').innerText = initials;
+  }
+  if (document.getElementById('settings-avatar')) {
+    document.getElementById('settings-avatar').innerText = initials;
+    document.getElementById('set-name').value = user.name;
+    document.getElementById('set-surname').value = user.surname;
+    document.getElementById('set-email').value = user.email;
+    document.getElementById('set-city').value = user.city;
+    document.getElementById('set-bio').value = user.bio || '';
+    document.getElementById('set-phone').value = user.phone || '';
+  }
 }
 
 function init() {
@@ -68,19 +87,262 @@ function init() {
   renderCabinetApps();
   renderSavedFullGrid();
   renderHistory();
-  document.getElementById('bonuses-live-val-public').innerText = userBonusCount;
-  if(document.getElementById('bonuses-live-val')) document.getElementById('bonuses-live-val').innerText = userBonusCount;
+  renderCalendar();
 
-  // ROUTING FIX (Помилка 3)
+  document.querySelectorAll('#bonuses-live-val, #bonuses-live-val-public').forEach(el => {
+    if (el) el.innerText = userBonusCount;
+  });
+
   if (!window.location.hash) {
     history.replaceState({ screen: 'screen-home' }, '', '#home');
   }
   handleHashRouting();
 }
 
-// =========================================================
-// ROUTING
-// =========================================================
+// 1. КАРТА БЕЗ API KEY
+function initRealMap() {
+  if (leafletMap) {
+    leafletMap.invalidateSize();
+    return;
+  }
+
+  leafletMap = L.map('real-map-container').setView([49.2331, 28.4682], 13);
+
+  // Використовуємо відкритий шар Humanitarian OSM (HOT)
+  L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors, Humanitarian OpenStreetMap Team'
+  }).addTo(leafletMap);
+
+  markersLayer = L.layerGroup().addTo(leafletMap);
+  renderMapCards();
+}
+
+function updateMapMarkers(filteredInitiatives) {
+  if (!markersLayer) return;
+  markersLayer.clearLayers();
+
+  filteredInitiatives.forEach(item => {
+    if (item.coords) {
+      const marker = L.marker(item.coords).addTo(markersLayer);
+      marker.bindPopup(`
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
+          <b style="font-size: 14px;">${item.title}</b>
+          <div style="font-size: 12px; color: #707b8b; margin: 4px 0;">📍 ${item.address}</div>
+          <button onclick="openDetailView(${item.id})" style="background: #e65135; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; width: 100%;">Детальніше</button>
+        </div>
+      `);
+    }
+  });
+}
+
+// 2. ОБМІН БОНУСІВ (НАДІЙНИЙ СТАН КНОПКИ)
+function redeemDiscount(btnElement, cost) {
+  if (!btnElement.dataset.defaultText) {
+    btnElement.dataset.defaultText = btnElement.innerText;
+  }
+  const defaultText = btnElement.dataset.defaultText;
+
+  if (userBonusCount >= cost) {
+    userBonusCount -= cost;
+    localStorage.setItem('volo_bonuses', userBonusCount);
+    document.querySelectorAll('#bonuses-live-val, #bonuses-live-val-public').forEach(el => el.innerText = userBonusCount);
+
+    btnElement.innerText = "Отримано ✓";
+    const ogBg = btnElement.style.background;
+    btnElement.style.background = "var(--badge-green-text)";
+    btnElement.style.color = "white";
+
+    setTimeout(() => {
+      btnElement.innerText = defaultText;
+      btnElement.style.background = ogBg;
+      btnElement.style.color = "";
+    }, 2000);
+  } else {
+    btnElement.innerText = `Недостатньо (${userBonusCount}/${cost})`;
+    const ogBg = btnElement.style.background;
+    btnElement.style.background = "#e65135";
+    btnElement.style.color = "white";
+
+    setTimeout(() => {
+      btnElement.innerText = defaultText;
+      btnElement.style.background = ogBg;
+      btnElement.style.color = "";
+    }, 2000);
+  }
+}
+
+// 3. РЕФЕРАЛЬНЕ ПОСИЛАННЯ (ДИНАМІЧНЕ І БЕЗ ALERT)
+function copyReferralLink(btn) {
+  const user = JSON.parse(localStorage.getItem('currentUser')) || { name: 'user' };
+  const rawName = (user.name || 'user').toLowerCase().trim();
+  const slug = encodeURIComponent(rawName);
+  const refLink = `https://volomap.ua/ref/${slug}`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(refLink);
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = refLink;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  if (!btn.dataset.defaultText) {
+    btn.dataset.defaultText = btn.innerText;
+  }
+  const ogText = btn.dataset.defaultText;
+  btn.innerText = "Скопійовано ✓";
+  btn.style.borderColor = "var(--badge-green-text)";
+  btn.style.color = "var(--badge-green-text)";
+
+  setTimeout(() => {
+    btn.innerText = ogText;
+    btn.style.borderColor = "";
+    btn.style.color = "";
+  }, 2500);
+}
+
+// 4 & 5. ДИНАМІЧНИЙ КАЛЕНДАР
+function renderCalendar() {
+  const labelHeader = document.getElementById('label-date-val');
+  const monthTitle = document.getElementById('cal-month-year-title');
+  if (monthTitle) {
+    monthTitle.innerText = `${monthNamesUa[calViewMonth]} ${calViewYear}`;
+  }
+  if (labelHeader && selectedDateMode === 'all') {
+    labelHeader.innerText = `${monthNamesUa[calViewMonth]} ${calViewYear}`;
+  }
+
+  const grid = document.getElementById('calendar-days-mock');
+  if (!grid) return;
+
+  const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+  const firstDayIndex = (new Date(calViewYear, calViewMonth, 1).getDay() + 6) % 7;
+
+  let html = '';
+  for (let i = 0; i < firstDayIndex; i++) {
+    html += `<div></div>`;
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const isToday = (day === currentDay && calViewMonth === currentMonth && calViewYear === currentYear);
+    const dateStr = `${day < 10 ? '0' + day : day}.${(calViewMonth + 1) < 10 ? '0' + (calViewMonth + 1) : (calViewMonth + 1)}.${calViewYear}`;
+    const isSelected = (selectedDateMode === 'exact' && selectedExactDate === dateStr);
+
+    let style = "width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; cursor: pointer; border-radius: 50%; font-size: 12px;";
+    if (isSelected) {
+      style += "background: var(--primary); color: white; font-weight: 800;";
+    } else if (isToday) {
+      style += "border: 1px solid var(--primary); color: var(--primary); font-weight: 700;";
+    }
+
+    html += `<div style="${style}" onclick="selectExactCalendarDay(${day})">${day}</div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function calPrevMonth(e) {
+  e.stopPropagation();
+  calViewMonth--;
+  if (calViewMonth < 0) {
+    calViewMonth = 11;
+    calViewYear--;
+  }
+  renderCalendar();
+}
+
+function calNextMonth(e) {
+  e.stopPropagation();
+  calViewMonth++;
+  if (calViewMonth > 11) {
+    calViewMonth = 0;
+    calViewYear++;
+  }
+  renderCalendar();
+}
+
+function selectExactCalendarDay(day) {
+  const m = (calViewMonth + 1) < 10 ? '0' + (calViewMonth + 1) : (calViewMonth + 1);
+  const d = day < 10 ? '0' + day : day;
+  selectedExactDate = `${d}.${m}.${calViewYear}`;
+  selectedDateMode = 'exact';
+
+  document.getElementById('label-date-val').innerText = selectedExactDate;
+  renderCalendar();
+  closeAllDropdownMenus();
+  renderMapCards();
+}
+
+function chooseDateFilter(mode) {
+  selectedDateMode = mode;
+  const labelHeader = document.getElementById('label-date-val');
+
+  if (mode === 'today') {
+    const d = currentDay < 10 ? '0' + currentDay : currentDay;
+    const m = (currentMonth + 1) < 10 ? '0' + (currentMonth + 1) : (currentMonth + 1);
+    selectedExactDate = `${d}.${m}.${currentYear}`;
+    labelHeader.innerText = "Сьогодні";
+  } else if (mode === 'week') {
+    labelHeader.innerText = "Цього тижня";
+  } else if (mode === 'month') {
+    labelHeader.innerText = "Цього місяця";
+  } else if (mode === 'all') {
+    selectedExactDate = null;
+    labelHeader.innerText = `${monthNamesUa[calViewMonth]} ${calViewYear}`;
+  }
+
+  renderCalendar();
+  closeAllDropdownMenus();
+  renderMapCards();
+}
+
+function renderMapCards() {
+  const container = document.getElementById('map-cards-list');
+  const filtered = initiatives.filter(item => {
+    const c1 = selectedCity === 'Усі міста' || item.city === selectedCity;
+    const c2 = selectedCategory === 'Усі напрями' || item.category === selectedCategory;
+    const c3 = selectedDiff === 'Будь-яка' || item.difficulty === selectedDiff;
+    const c4 = selectedFormat === 'all' || item.format === selectedFormat;
+
+    let c5 = true;
+    if (selectedDateMode === 'exact' && selectedExactDate) {
+      c5 = item.targetDate >= selectedExactDate;
+    }
+
+    return c1 && c2 && c3 && c4 && c5;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p style="padding: 24px; color: var(--gray-muted); text-align: center;">За обраними фільтрами ініціатив не знайдено.</p>';
+    updateMapMarkers([]);
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const isSaved = savedFavIds.includes(item.id);
+    const heartColor = isSaved ? 'var(--primary)' : 'var(--gray-muted)';
+    return `
+      <div class="map-card-sm" onclick="openDetailView(${item.id})">
+        <img src="${item.image}" alt="${item.title}">
+        <div style="flex: 1; position: relative;">
+          <div style="position: absolute; top: 0; right: 0; color: ${heartColor}; font-size: 16px;">❤</div>
+          <span class="tag-badge">${item.category}</span>
+          <div style="font-size: 14px; font-weight: 800; line-height: 1.25; margin: 2px 0; padding-right: 16px;">${item.title}</div>
+          <div style="font-size: 11px; color: var(--gray-muted);">📍 ${item.city} • 📅 ${item.date}</div>
+          <div style="font-size: 11px; margin-top: 4px;">Складність: <b>${item.difficulty}</b></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateMapMarkers(filtered);
+}
+
+// ROUTING & NAVIGATION
 function navigateTo(screenId) {
   let hash = '#home';
   if (screenId === 'screen-map') hash = '#map';
@@ -94,9 +356,7 @@ function navigateTo(screenId) {
   if (screenId === 'screen-detail') hash = '#initiative-' + selectedInitId;
   if (screenId === 'screen-apply') hash = '#apply';
 
-  // FIX 4: Очищаємо підкреслення навігації при переході до іншого екрану
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-
   history.pushState({ screen: screenId }, '', hash);
   showScreen(screenId);
 }
@@ -116,15 +376,12 @@ function showScreen(screenId) {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Init real map if Map tab is opened
   if (screenId === 'screen-map') {
-      setTimeout(initRealMap, 100);
+    setTimeout(initRealMap, 100);
   }
 }
 
-window.addEventListener('popstate', (e) => {
-  handleHashRouting();
-});
+window.addEventListener('popstate', () => handleHashRouting());
 
 function handleHashRouting() {
   const hash = window.location.hash;
@@ -139,63 +396,21 @@ function handleHashRouting() {
   else if (hash === '#apply') showScreen('screen-apply');
   else if (hash.startsWith('#initiative-')) {
     const id = parseInt(hash.split('-')[1]);
-    if (id) {
-      openDetailView(id, false);
-    }
+    if (id) openDetailView(id, false);
+  } else {
+    showScreen('screen-home');
   }
-  else showScreen('screen-home');
 }
 
-// =========================================================
-// REAL LEAFLET MAP (Інтерактивна карта Вінниці - Помилка 1 fix)
-// =========================================================
-function initRealMap() {
-    if (leafletMap) {
-        leafletMap.invalidateSize();
-        return;
-    }
-    
-    leafletMap = L.map('real-map-container').setView([49.2331, 28.4682], 13);
-    
-    // FIX 1: Використовуємо CartoDB Voyager щоб не було 403 Access Blocked на локалці
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap contributors, © CARTO',
-        maxZoom: 19
-    }).addTo(leafletMap);
-    
-    markersLayer = L.layerGroup().addTo(leafletMap);
-    renderMapCards(); 
-}
-
-function updateMapMarkers(filteredInitiatives) {
-    if(!markersLayer) return;
-    markersLayer.clearLayers();
-    
-    filteredInitiatives.forEach(init => {
-        if(init.coords) {
-            const marker = L.marker(init.coords).addTo(markersLayer);
-            marker.bindPopup(`
-                <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                    <b style="font-size: 14px;">${init.title}</b>
-                    <div style="font-size: 12px; color: #707b8b; margin: 4px 0;">📍 ${init.address}</div>
-                    <button onclick="openDetailView(${init.id})" style="background: #e65135; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; width: 100%;">Детальніше</button>
-                </div>
-            `);
-        }
-    });
-}
-
-// =========================================================
-// ФІЛЬТРИ З ДИНАМІЧНОЮ ГАЛОЧКОЮ 
-// =========================================================
+// ФІЛЬТРИ ДРОПДАУНІВ
 function toggleDropdownMenu(menuId) {
   const menu = document.getElementById(menuId);
   const isOpen = menu.classList.contains('open');
   closeAllDropdownMenus();
   if (!isOpen) {
     menu.classList.add('open');
-    if(menuId === 'menu-city') {
-        document.getElementById('search-city-input').focus();
+    if (menuId === 'menu-city') {
+      document.getElementById('search-city-input').focus();
     }
   }
 }
@@ -215,26 +430,16 @@ function chooseCity(city) {
   document.getElementById('label-city-val').innerText = city;
   updateDropdownSelectedVisual('menu-city', city);
   closeAllDropdownMenus();
-  
-  // FIX 7: Очищаємо пошук при виборі та скидаємо фільтр
   document.getElementById('search-city-input').value = '';
   filterCityDropdown('');
-  
   renderMapCards();
 }
 
-// FIX 7: Пошук по місту не чутливий до регістру і відновлює "Усі міста"
 function filterCityDropdown(search) {
   const term = search.toLowerCase().trim();
   document.querySelectorAll('#city-options-container .dropdown-option').forEach(opt => {
     const rawText = opt.innerText.replace('✓', '').trim();
-    const text = rawText.toLowerCase();
-    
-    if (term === '' || text.includes(term)) {
-        opt.style.display = 'flex';
-    } else {
-        opt.style.display = 'none';
-    }
+    opt.style.display = (term === '' || rawText.toLowerCase().includes(term)) ? 'flex' : 'none';
   });
 }
 
@@ -263,19 +468,13 @@ function chooseFormat(fmt) {
   renderMapCards();
 }
 
-// FIX 1: Календар
-function chooseDateFilter(val) {
-    document.getElementById('label-date-val').innerText = val;
-    closeAllDropdownMenus();
-}
-
 function updateDropdownSelectedVisual(menuId, val) {
   document.querySelectorAll(`#${menuId} .dropdown-option`).forEach(opt => {
     const rawText = opt.innerText.replace('✓', '').trim();
     if (rawText === val || (rawText.startsWith(val) && val !== 'Усі міста')) {
       opt.classList.add('selected');
       if (!opt.innerHTML.includes('<span>✓</span>')) {
-          opt.innerHTML = `${rawText} <span>✓</span>`;
+        opt.innerHTML = `${rawText} <span>✓</span>`;
       }
     } else {
       opt.classList.remove('selected');
@@ -284,51 +483,7 @@ function updateDropdownSelectedVisual(menuId, val) {
   });
 }
 
-// =========================================================
-// РЕНДЕРИНГ
-// =========================================================
-function renderMapCards() {
-  const container = document.getElementById('map-cards-list');
-  const filtered = initiatives.filter(i => {
-    const c1 = selectedCity === 'Усі міста' || i.city === selectedCity;
-    const c2 = selectedCategory === 'Усі напрями' || i.category === selectedCategory;
-    
-    let difficultyMatch = true;
-    if (selectedDiff !== 'Будь-яка') {
-      difficultyMatch = i.difficulty === selectedDiff;
-    }
-    
-    const c4 = selectedFormat === 'all' || i.format === selectedFormat;
-    return c1 && c2 && difficultyMatch && c4;
-  });
-
-  if (filtered.length === 0) {
-    container.innerHTML = '<p style="padding: 24px; color: var(--gray-muted); text-align: center;">За обраними фільтрами ініціатив не знайдено.</p>';
-    updateMapMarkers([]);
-    return;
-  }
-
-  container.innerHTML = filtered.map(item => {
-    const isSaved = savedFavIds.includes(item.id);
-    const heartColor = isSaved ? 'var(--primary)' : 'var(--gray-muted)';
-    
-    return `
-    <div class="map-card-sm" onclick="openDetailView(${item.id})">
-      <img src="${item.image}" alt="${item.title}">
-      <div style="flex: 1; position: relative;">
-        <!-- FIX 3: Сердечко на мапі оновлюється -->
-        <div style="position: absolute; top: 0; right: 0; color: ${heartColor}; font-size: 16px;">❤</div>
-        <span class="tag-badge">${item.category}</span>
-        <div style="font-size: 14px; font-weight: 800; line-height: 1.25; margin: 2px 0; padding-right: 16px;">${item.title}</div>
-        <div style="font-size: 11px; color: var(--gray-muted);">📍 ${item.city} • 📅 ${item.date}</div>
-        <div style="font-size: 11px; margin-top: 4px;">Складність: <b>${item.difficulty}</b></div>
-      </div>
-    </div>
-  `}).join('');
-  
-  updateMapMarkers(filtered);
-}
-
+// ГОЛОВНА ТА ДЕТАЛІ
 function renderHomeCards() {
   const container = document.getElementById('popular-cards-box');
   container.innerHTML = initiatives.slice(0, 4).map(item => `
@@ -348,9 +503,6 @@ function renderHomeCards() {
   `).join('');
 }
 
-// =========================================================
-// ДЕТАЛІ ІНІЦІАТИВИ
-// =========================================================
 function openDetailView(id, pushHistory = true) {
   selectedInitId = id;
   const item = initiatives.find(i => i.id === id) || initiatives[0];
@@ -364,10 +516,10 @@ function openDetailView(id, pushHistory = true) {
   document.getElementById('d-side-address').innerText = item.address;
 
   updateSaveBtnState();
-  
+
   const applyBtn = document.getElementById('btn-apply-detail');
   const alreadyApplied = userApplications.some(app => app.initId === selectedInitId);
-  
+
   if (alreadyApplied) {
     applyBtn.innerText = 'Заявку вже подано ✓';
     applyBtn.classList.replace('btn-coral', 'btn-outline');
@@ -377,31 +529,28 @@ function openDetailView(id, pushHistory = true) {
     applyBtn.classList.replace('btn-outline', 'btn-coral');
     applyBtn.onclick = goToApplyCurrent;
   }
-  
+
   if (pushHistory) {
-      navigateTo('screen-detail');
+    navigateTo('screen-detail');
   } else {
-      showScreen('screen-detail');
+    showScreen('screen-detail');
   }
 }
 
-// FIX 5: Динамічні дані у формі заявки (немає статичних Вінниця/Дата)
 function goToApplyCurrent() {
   const item = initiatives.find(i => i.id === selectedInitId) || initiatives[0];
-  
   document.getElementById('form-initiative').value = item.title;
   document.getElementById('form-city').value = item.city;
   document.getElementById('form-date').value = item.date.replace('До ', '');
   document.getElementById('form-address').value = item.address;
-  
-  // Якщо користувач зареєстрований, підставити його дані
+
   const user = JSON.parse(localStorage.getItem('currentUser'));
   if (user) {
-      document.getElementById('form-name').value = `${user.name} ${user.surname}`;
-      document.getElementById('form-email').value = user.email;
-      if (user.phone) document.getElementById('form-phone').value = user.phone;
+    document.getElementById('form-name').value = `${user.name} ${user.surname}`;
+    document.getElementById('form-email').value = user.email;
+    if (user.phone) document.getElementById('form-phone').value = user.phone;
   }
-  
+
   document.getElementById('apply-lead-text').innerText = `Заповни форму, щоб долучитися до ініціативи`;
   document.getElementById('apply-success-box').style.display = 'none';
   navigateTo('screen-apply');
@@ -416,9 +565,8 @@ function toggleSaveCurrent() {
   localStorage.setItem('volo_favs', JSON.stringify(savedFavIds));
   updateSaveBtnState();
   renderSavedFullGrid();
-  // FIX 3: Оновлюємо картки на мапі щоб сердечко відмалювалось
-  if(document.getElementById('screen-map').classList.contains('active')) {
-      renderMapCards();
+  if (document.getElementById('screen-map').classList.contains('active')) {
+    renderMapCards();
   }
 }
 
@@ -437,19 +585,19 @@ function updateSaveBtnState() {
 
 function handleFormSubmission(e) {
   e.preventDefault();
-  
+
   const alreadyApplied = userApplications.some(app => app.initId === selectedInitId);
   if (alreadyApplied) {
-      const errorBox = document.getElementById('apply-error-box');
-      errorBox.style.display = 'block';
-      errorBox.innerText = 'Ви вже подали заявку на цю ініціативу. Перевірте статус у кабінеті.';
-      setTimeout(() => errorBox.style.display = 'none', 3000);
-      return;
+    const errorBox = document.getElementById('apply-error-box');
+    errorBox.style.display = 'block';
+    errorBox.innerText = 'Ви вже подали заявку на цю ініціативу. Перевірте статус у кабінеті.';
+    setTimeout(() => errorBox.style.display = 'none', 3000);
+    return;
   }
-  
+
   const target = document.getElementById('form-initiative').value;
   const item = initiatives.find(i => i.id === selectedInitId) || initiatives[0];
-  
+
   userApplications.unshift({
     id: Date.now(),
     title: target,
@@ -458,22 +606,19 @@ function handleFormSubmission(e) {
     img: item.image,
     initId: selectedInitId
   });
-  
+
   userBonusCount += 50;
   localStorage.setItem('volo_bonuses', userBonusCount);
-  document.getElementById('bonuses-live-val-public').innerText = userBonusCount;
-  if(document.getElementById('bonuses-live-val')) document.getElementById('bonuses-live-val').innerText = userBonusCount;
+  document.querySelectorAll('#bonuses-live-val, #bonuses-live-val-public').forEach(el => el.innerText = userBonusCount);
   document.getElementById('apply-success-box').style.display = 'block';
-  
+
   setTimeout(() => {
     renderCabinetApps();
     navigateTo('screen-cabinet');
   }, 1400);
 }
 
-// =========================================================
-// КАБІНЕТ ТА ЗБЕРЕЖЕННЯ
-// =========================================================
+// КАБІНЕТ
 function switchCabTab(tab) {
   document.querySelectorAll('.cab-pane-view').forEach(p => p.style.display = 'none');
   document.querySelectorAll('.cab-nav-item').forEach(b => b.classList.remove('active'));
@@ -512,7 +657,6 @@ function filterAppStatus(status) {
 function cancelApplication(id) {
   userApplications = userApplications.filter(a => a.id !== id);
   renderCabinetApps();
-  // FIX 6: Кнопка в каталозі теж скидається
   openDetailView(selectedInitId, false);
 }
 
@@ -544,7 +688,6 @@ function renderCabinetApps() {
     `;
   }).join('');
 
-  // Збережені прев'ю
   const favPreview = document.getElementById('cab-saved-preview');
   favPreview.innerHTML = initiatives.slice(0, 2).map(item => `
     <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="openDetailView(${item.id})">
@@ -581,9 +724,9 @@ function renderSavedFullGrid() {
 function renderHistory() {
   const container = document.getElementById('history-items-list');
   const list = [
-    { title: "Допомога сім'ям з дітьми", date: "10.11.2025", hours: "+4 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[0].image, id: 1 },
-    { title: "Підтримка літніх людей у Вінниці", date: "10.11.2025", hours: "+6 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[3].image, id: 4 },
-    { title: "Прибирання території", date: "10.11.2025", hours: "+4 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[4].image, id: 5 }
+    { title: "Допомога сім'ям з дітьми", date: getFutureDate(-2), hours: "+4 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[0].image, id: 1 },
+    { title: "Підтримка літніх людей у Вінниці", date: getFutureDate(-5), hours: "+6 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[3].image, id: 4 },
+    { title: "Прибирання території", date: getFutureDate(-8), hours: "+4 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[4].image, id: 5 }
   ];
   container.innerHTML = list.map(h => `
     <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
@@ -603,29 +746,25 @@ function renderHistory() {
   `).join('');
 }
 
-// =========================================================
-// ФОРМИ ТА МОДАЛКИ (ПОМИЛКА 5, 4, 3)
-// =========================================================
-// FIX 4: Реєстрація зчитує дані
+// РЕЄСТРАЦІЯ ТА НАЛАШТУВАННЯ
 function handleRegistration(e) {
   e.preventDefault();
-  
   const firstName = document.getElementById('reg-name').value;
   const lastName = document.getElementById('reg-surname').value;
   const email = document.getElementById('reg-email').value;
   const city = document.getElementById('reg-city').value;
   const role = document.querySelector('input[name="role"]:checked').value;
-  
+
   const user = {
-      name: firstName,
-      surname: lastName,
-      email: email,
-      city: city,
-      role: role,
-      bio: '',
-      phone: ''
+    name: firstName,
+    surname: lastName,
+    email: email,
+    city: city,
+    role: role,
+    bio: '',
+    phone: ''
   };
-  
+
   localStorage.setItem('currentUser', JSON.stringify(user));
   updateProfileDisplay();
   navigateTo('screen-cabinet');
@@ -636,25 +775,24 @@ function handleLogin(e) {
   navigateTo('screen-cabinet');
 }
 
-// FIX 5: Налаштування зберігаються
 function saveProfileSettings(e) {
-    e.preventDefault();
-    const user = {
-        name: document.getElementById('set-name').value,
-        surname: document.getElementById('set-surname').value,
-        email: document.getElementById('set-email').value,
-        city: document.getElementById('set-city').value,
-        bio: document.getElementById('set-bio').value,
-        phone: document.getElementById('set-phone').value,
-        role: 'volunteer'
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    updateProfileDisplay();
-    
-    const box = document.getElementById('settings-success-box');
-    box.style.display = 'block';
-    setTimeout(() => box.style.display = 'none', 3000);
+  e.preventDefault();
+  const user = {
+    name: document.getElementById('set-name').value,
+    surname: document.getElementById('set-surname').value,
+    email: document.getElementById('set-email').value,
+    city: document.getElementById('set-city').value,
+    bio: document.getElementById('set-bio').value,
+    phone: document.getElementById('set-phone').value,
+    role: 'volunteer'
+  };
+
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  updateProfileDisplay();
+
+  const box = document.getElementById('settings-success-box');
+  box.style.display = 'block';
+  setTimeout(() => box.style.display = 'none', 3000);
 }
 
 function handleContactSubmit(e) {
@@ -670,6 +808,7 @@ function handleContactSubmit(e) {
   }, 3000);
 }
 
+// МОДАЛКИ
 function openHowItWorksModal() {
   document.getElementById('modalHowItWorks').classList.add('open');
 }
@@ -684,47 +823,16 @@ function closeSponsorModal() {
   document.getElementById('modalSponsor').classList.remove('open');
 }
 function handleSponsorSubmit(e) {
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type="submit"]');
-    btn.innerText = "Запит надіслано ✓";
-    btn.style.background = "var(--badge-green-text)";
-    setTimeout(() => {
-        closeSponsorModal();
-        btn.innerText = "Надіслати запит →";
-        btn.style.background = "var(--primary)";
-        e.target.reset();
-    }, 2000);
-}
-
-// FIX 3: Кнопки обміну балів (апострофи)
-function redeemDiscount(btnElement, cost) {
-  const originalText = btnElement.innerText;
-  
-  if (userBonusCount >= cost) {
-    userBonusCount -= cost;
-    localStorage.setItem('volo_bonuses', userBonusCount);
-    document.getElementById('bonuses-live-val-public').innerText = userBonusCount;
-    if(document.getElementById('bonuses-live-val')) document.getElementById('bonuses-live-val').innerText = userBonusCount;
-    
-    btnElement.innerText = "Отримано ✓";
-    btnElement.classList.remove('btn-coral', 'btn-navy');
-    btnElement.style.background = "var(--badge-green-text)";
-    btnElement.style.color = "white";
-    
-    setTimeout(() => {
-        btnElement.innerText = originalText;
-        btnElement.style.background = "";
-        btnElement.classList.add('btn-navy');
-    }, 3000);
-  } else {
-    btnElement.innerText = "Недостатньо";
-    btnElement.style.background = "#94a3b8";
-    btnElement.style.color = "white";
-    setTimeout(() => {
-        btnElement.innerText = originalText;
-        btnElement.style.background = "";
-    }, 2000);
-  }
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.innerText = "Запит надіслано ✓";
+  btn.style.background = "var(--badge-green-text)";
+  setTimeout(() => {
+    closeSponsorModal();
+    btn.innerText = "Надіслати запит →";
+    btn.style.background = "var(--primary)";
+    e.target.reset();
+  }, 2000);
 }
 
 init();
