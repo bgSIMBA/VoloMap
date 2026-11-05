@@ -51,8 +51,8 @@ let selectedExactDate = null;
 let calViewYear = currentYear;
 let calViewMonth = currentMonth;
 
-let leafletMap = null;
-let markersLayer = null;
+let maps = {};
+let markersLayers = {};
 
 // ==========================================
 // ЛОГІКА ДЛЯ ОРГАНІЗАТОРА
@@ -275,41 +275,53 @@ function init() {
 // ==========================================
 // КАРТА
 // ==========================================
-function initRealMap() {
-  if (leafletMap) {
-    leafletMap.invalidateSize();
+function initRealMap(containerId = 'real-map-container') {
+  if (maps[containerId]) {
+    maps[containerId].invalidateSize();
     return;
   }
 
-  leafletMap = L.map('real-map-container').setView([49.2331, 28.4682], 13);
+  const map = L.map(containerId).setView([49.2331, 28.4682], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap contributors, Humanitarian OpenStreetMap Team'
-  }).addTo(leafletMap);
+  }).addTo(map);
 
-  markersLayer = L.layerGroup().addTo(leafletMap);
-  renderMapCards();
+  maps[containerId] = map;
+
+  markersLayers[containerId] = L.layerGroup().addTo(map);
+
+  updateMapMarkers(initiatives);
 }
 
 function updateMapMarkers(filteredInitiatives) {
-  if (!markersLayer) return;
-  markersLayer.clearLayers();
+  Object.keys(markersLayers).forEach(containerId => {
+    const layer = markersLayers[containerId];
 
-  filteredInitiatives.forEach(item => {
-    if (item.coords) {
-      const marker = L.marker(item.coords).addTo(markersLayer);
-      marker.bindPopup(`
-        <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
-          <b style="font-size: 14px;">${item.title}</b>
-          <div style="font-size: 12px; color: #707b8b; margin: 4px 0;">📍 ${item.address}</div>
-          <button onclick="openDetailView(${item.id})" style="background: #e65135; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; width: 100%;">Детальніше</button>
-        </div>
-      `);
-    }
+    layer.clearLayers();
+
+    filteredInitiatives.forEach(item => {
+      if (item.coords) {
+        const marker = L.marker(item.coords).addTo(layer);
+
+        marker.bindPopup(`
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
+            <b style="font-size: 14px;">${item.title}</b>
+            <div style="font-size: 12px; color: #707b8b; margin: 4px 0;">
+              📍 ${item.address}
+            </div>
+            <button
+              onclick="openDetailView(${item.id})"
+              style="background: #e65135; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; width: 100%;">
+              Детальніше
+            </button>
+          </div>
+        `);
+      }
+    });
   });
 }
-
 // ==========================================
 // БОНУСИ
 // ==========================================
@@ -454,6 +466,9 @@ function selectExactCalendarDay(day) {
   renderCalendar();
   closeAllDropdownMenus();
   renderMapCards();
+  setTimeout(() => {
+  initRealMap('home-map-container');
+}, 300);
 }
 
 function chooseDateFilter(mode) {
@@ -561,8 +576,10 @@ function showScreen(screenId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (screenId === 'screen-map') {
-    setTimeout(initRealMap, 100);
-  }
+  setTimeout(() => {
+    initRealMap('real-map-container');
+  }, 100);
+}
 }
 
 window.addEventListener('popstate', () => handleHashRouting());
