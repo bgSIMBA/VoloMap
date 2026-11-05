@@ -1134,6 +1134,64 @@
   <!-- Leaflet JS для карти -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Власний скрипт -->
-  <script type="module" src="script.js"></script>
+  <!-- 1. Основний скрипт підключаємо як звичайно (щоб працювала навігація) -->
+  <script src="script.js"></script>
+
+  <!-- 2. Firebase виносимо в окремий модуль -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbZ7ulyyTDtwifltQwVC3VrhFvDoyRobw",
+      authDomain: "volomap-57bea.firebaseapp.com",
+      projectId: "volomap-57bea",
+      storageBucket: "volomap-57bea.firebasestorage.app",
+      messagingSenderId: "1090207410336",
+      appId: "1:1090207410336:web:cc1d74b3eefe04d06041c5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const applyForm = document.getElementById("apply-form");
+    if (applyForm) {
+      applyForm.addEventListener("submit", async (event) => {
+        event.preventDefault(); 
+        
+        const submitBtn = applyForm.querySelector('button[type="submit"]');
+        const errorBox = document.getElementById("apply-error-box");
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Відправка...";
+        
+        try {
+          // Відправляємо в базу даних Firebase
+          await addDoc(collection(db, "applications"), {
+            volunteerName: document.getElementById("form-name").value,
+            volunteerPhone: document.getElementById("form-phone").value,
+            volunteerEmail: document.getElementById("form-email").value,
+            initiativeTitle: document.getElementById("form-initiative").value,
+            city: document.getElementById("form-city").value,
+            initiativeDate: document.getElementById("form-date").value,
+            status: "registered",
+            appliedAt: new Date().toISOString()
+          });
+
+          // Якщо відправка у Firebase успішна, викликаємо функцію для оновлення кабінету
+          if (window.onSuccessfulFirebaseSubmit) {
+              window.onSuccessfulFirebaseSubmit();
+          }
+          
+        } catch (error) {
+          console.error(error);
+          errorBox.textContent = "Помилка при збереженні бази даних. Перевірте з'єднання.";
+          errorBox.style.display = "block";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Відправити заявку →";
+        }
+      });
+    }
+  </script>
 </body>
 </html>
