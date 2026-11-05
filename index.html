@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VOLOMAP — Волонтерська платформа допомоги постраждалим від війни</title>
-  
+
   <!-- Шрифти -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
+
   <!-- Leaflet CSS для реальної карти -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -95,7 +95,7 @@
   </section>
 
   <!-- ========================================================
-       2. МАПА ІНІЦІАТИВ (РЕАЛЬНА КАРТА LEAFLET + ДРОПДАУНИ)
+       2. МАПА ІНІЦІАТИВ
        ======================================================== -->
   <section id="screen-map" class="screen-view">
     <div class="container">
@@ -162,8 +162,6 @@
           </div>
         </div>
 
-        <!-- NEW: Calendar Filter Widget -->
-                <!-- Віджет календаря з перемиканням місяців -->
         <div class="dropdown-widget" id="widget-date">
           <div class="filter-btn-f" onclick="toggleDropdownMenu('menu-date')">
             <div>
@@ -181,8 +179,7 @@
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: var(--gray-muted);">
                 <span>Пн</span><span>Вв</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Нд</span>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 13px;" id="calendar-days-mock">
-            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 13px;" id="calendar-days-mock"></div>
             <div style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;">
                 <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('today')">Сьогодні</button>
                 <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('week')">Цього тижня</button>
@@ -191,12 +188,13 @@
             <button type="button" class="btn-coral" style="width: 100%; justify-content: center; padding: 10px; margin-top: 12px; font-size: 13px;" onclick="chooseDateFilter('all')">Показати всі дати</button>
           </div>
         </div>
-    </div>
-    <!-- Контейнери для карти та карток, яких не вистачало -->
+      </div>
+
       <div style="display: flex; gap: 20px; margin-top: 24px; height: 500px;">
         <div id="map-cards-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 10px;"></div>
         <div id="real-map-container" style="flex: 1; border-radius: var(--radius-lg); background: #e2e8f0; z-index: 1;"></div>
       </div>
+    </div>
   </section>
 
   <!-- ========================================================
@@ -219,7 +217,7 @@
 
           <span class="tag-badge" id="d-badge">Допомога людям</span>
           <h1 class="detail-title" id="d-title">Допомога сім'ям з дітьми, які постраждали від війни</h1>
-          
+
           <div class="detail-meta-list">
             <div id="d-loc">📍 Вінниця, Старе місто</div>
             <div id="d-date">📅 До 10 листопада 2025</div>
@@ -283,7 +281,7 @@
   </section>
 
   <!-- ========================================================
-       4. ПОДАТИ ЗАЯВКУ (ФОРМА)
+       4. ПОДАТИ ЗАЯВКУ
        ======================================================== -->
   <section id="screen-apply" class="screen-view">
     <div class="container">
@@ -293,9 +291,8 @@
           Заповни форму, щоб долучитися до ініціативи
         </p>
 
-        <!-- Блок помилки дублювання заявок -->
         <div id="apply-error-box" style="display: none; margin-bottom: 16px; color: #b91c1c; font-size: 13px; font-weight: 700; background: #fef2f2; padding: 12px; border-radius: 8px; text-align: center;"></div>
-        
+
         <form id="apply-form">
           <div class="form-group-item">
             <label>Ім'я *</label>
@@ -362,26 +359,22 @@
           </div>
 
           <div class="cab-nav-menu">
-            <!-- Волонтерські вкладки -->
             <div class="cab-nav-item vol-only active" id="tab-btn-apps" onclick="switchCabTab('apps')">📁 Мої заявки</div>
             <div class="cab-nav-item vol-only" id="tab-btn-favs" onclick="switchCabTab('favs')">❤️ Збережені ініціативи</div>
             <div class="cab-nav-item vol-only" id="tab-btn-history" onclick="switchCabTab('history')">🕒 Історія участі</div>
             <div class="cab-nav-item vol-only" id="tab-btn-hours" onclick="switchCabTab('hours')">⏱️ Години волонтерства</div>
             <div class="cab-nav-item vol-only" id="tab-btn-bonuses" onclick="switchCabTab('bonuses')">🎁 Бонуси</div>
-            
-            <!-- Організаторські вкладки -->
+
             <div class="cab-nav-item org-only" id="tab-btn-org-initiatives" style="display: none;" onclick="switchCabTab('org-initiatives')">🏢 Мої ініціативи</div>
             <div class="cab-nav-item org-only" id="tab-btn-org-create" style="display: none;" onclick="switchCabTab('org-create')">➕ Створити ініціативу</div>
             <div class="cab-nav-item org-only" id="tab-btn-org-apps" style="display: none;" onclick="switchCabTab('org-apps')">👥 Заявки волонтерів</div>
 
-            <!-- Спільні вкладки -->
             <div class="cab-nav-item" id="tab-btn-settings" onclick="switchCabTab('settings')">⚙️ Налаштування</div>
           </div>
         </div>
 
         <div class="cab-content-pane">
 
-          <!-- ================= ОРГАНІЗАТОР: МОЇ ІНІЦІАТИВИ ================= -->
           <div id="cab-pane-org-initiatives" class="cab-pane-view" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <div>
@@ -390,27 +383,23 @@
                 </div>
                 <button class="btn-coral" onclick="switchCabTab('org-create')">➕ Створити нову</button>
             </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 16px;" id="org-initiatives-list">
-                <!-- Динамічний рендер -->
-            </div>
+            <div style="display: flex; flex-direction: column; gap: 16px;" id="org-initiatives-list"></div>
           </div>
 
-          <!-- ================= ОРГАНІЗАТОР: СТВОРИТИ ІНІЦІАТИВУ ================= -->
           <div id="cab-pane-org-create" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Створити ініціативу</h1>
-            
+
             <div id="org-create-success" style="display: none; background: #f0fdf4; color: #15803d; font-weight: 700; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
                 🎉 Ініціативу успішно створено та опубліковано на мапі!
             </div>
-            
+
             <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 36px;">
               <form onsubmit="handleCreateInitiative(event)">
                 <div class="form-group-item">
                   <label>Назва ініціативи *</label>
                   <input type="text" id="org-init-title" class="input-volo" required placeholder="Наприклад: Збір теплих речей для ВПО">
                 </div>
-                
+
                 <div class="form-row-2">
                   <div class="form-group-item">
                     <label>Категорія *</label>
@@ -442,7 +431,7 @@
                     <input type="text" id="org-init-address" class="input-volo" required placeholder="Вул. Соборна, 25">
                   </div>
                 </div>
-                
+
                 <div class="form-row-2">
                   <div class="form-group-item">
                     <label>Формат</label>
@@ -461,23 +450,18 @@
                   <label>Детальний опис</label>
                   <textarea id="org-init-desc" class="input-volo" rows="4" placeholder="Опишіть, яка саме допомога потрібна..."></textarea>
                 </div>
-                
+
                 <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px; margin-top: 10px;">Опублікувати ініціативу →</button>
               </form>
             </div>
           </div>
 
-          <!-- ================= ОРГАНІЗАТОР: ЗАЯВКИ ВОЛОНТЕРІВ ================= -->
           <div id="cab-pane-org-apps" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Заявки волонтерів</h1>
             <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;">Переглядайте та підтверджуйте заявки волонтерів на ваші ініціативи</p>
-            
-            <div style="display: flex; flex-direction: column; gap: 14px;" id="org-volunteers-list">
-                <!-- Динамічний рендер -->
-            </div>
+            <div style="display: flex; flex-direction: column; gap: 14px;" id="org-volunteers-list"></div>
           </div>
 
-          <!-- 5.1: Мої заявки -->
           <div id="cab-pane-apps" class="cab-pane-view">
             <h1 class="cab-page-title">Мої заявки</h1>
             <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 20px;">Усі ваші заявки на волонтерські ініціативи у Вінниці</p>
@@ -506,7 +490,6 @@
             </div>
           </div>
 
-          <!-- 5.2: Збережені ініціативи -->
           <div id="cab-pane-favs" class="cab-pane-view" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
               <div>
@@ -518,7 +501,6 @@
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;" id="favs-full-grid"></div>
           </div>
 
-          <!-- 5.3: Історія участі -->
           <div id="cab-pane-history" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Історія участі</h1>
             <div class="cab-stat-strip">
@@ -529,7 +511,6 @@
             <div style="display: flex; flex-direction: column; gap: 14px;" id="history-items-list"></div>
           </div>
 
-          <!-- 5.4: Години волонтерства -->
           <div id="cab-pane-hours" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Мої години волонтерства</h1>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
@@ -555,7 +536,6 @@
             </div>
           </div>
 
-          <!-- 5.5: Бонуси (Кабінет - виправлений) -->
           <div id="cab-pane-bonuses" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Бонуси</h1>
             <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;">Допомагай, отримуй бонуси, обмінюй на знижки та підтримуй тих, хто цього потребує.</p>
@@ -644,10 +624,10 @@
             </div>
           </div>
 
-          <!-- 5.6: Налаштування (Знімок 10) -->
+          <!-- Налаштування профілю -->
           <div id="cab-pane-settings" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Налаштування профілю</h1>
-            
+
             <div id="settings-success-box" style="display: none; margin-bottom: 16px; color: #15803d; font-size: 13px; font-weight: 700; background: #f0fdf4; padding: 12px; border-radius: 8px; text-align: center;">Профіль успішно оновлено!</div>
 
             <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 36px;">
@@ -681,11 +661,11 @@
                 <div class="form-row-2">
                   <div class="form-group-item">
                     <label>Email</label>
-                    <input type="email" id="set-email" class="input-volo" value="angelina@gmail.com">
+                    <input type="email" id="set-email" class="input-volo" value="" readonly>
                   </div>
                   <div class="form-group-item">
-                    <label>Пароль</label>
-                    <input type="password" class="input-volo" value="********">
+                    <label>Керування паролем</label>
+                    <button type="button" class="btn-outline" onclick="handlePasswordReset(document.getElementById('set-email').value)">Надіслати посилання для зміни пароля</button>
                   </div>
                 </div>
                 <div class="form-group-item" style="max-width: 48%;">
@@ -694,6 +674,7 @@
                 </div>
                 <button type="submit" class="btn-coral" style="margin-top: 10px;">Зберегти зміни</button>
               </form>
+              <button type="button" class="btn-outline" style="margin-top: 14px;" onclick="handleLogout()">Вийти з акаунта</button>
             </div>
           </div>
         </div>
@@ -702,11 +683,10 @@
   </section>
 
   <!-- ========================================================
-       6. БОНУСИ ПУБЛІЧНА СТОРІНКА (ВИПРАВЛЕНА ЗА МАКЕТОМ ЗНІМОК 6)
+       6. БОНУСИ ПУБЛІЧНА СТОРІНКА
        ======================================================== -->
   <section id="screen-bonuses" class="screen-view">
     <div class="container bonuses-page-layout">
-      <!-- Верхня сітка горизонтально -->
       <div class="bonus-top-grid">
         <div class="bonus-balance-card">
           <small style="color: #94a3b8; text-transform: uppercase; font-weight: 700;">Ваш баланс бонусів</small>
@@ -748,7 +728,6 @@
         <a style="font-weight: 700; cursor: pointer;">Переглянути всі →</a>
       </div>
 
-      <!-- Нижня сітка 4 колонки горизонтально -->
       <div class="discounts-grid">
         <div class="discount-card">
           <div>
@@ -774,8 +753,7 @@
           </div>
           <button class="btn-navy" style="margin-top: 24px; justify-content: center;" onclick="redeemDiscount(this, 400)">Обміняти (400 б.)</button>
         </div>
-        
-        <!-- Четверта картка (Чорне серце) -->
+
         <div class="discount-card" style="background: transparent; border: none; padding-top: 40px;">
           <h3 style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">Твоя допомога має значення</h3>
           <p style="font-size: 13px; color: var(--gray-muted); margin-bottom: 20px;">Разом ми змінюємо українське суспільство.</p>
@@ -909,7 +887,7 @@
   </section>
 
   <!-- ========================================================
-       9. СТАТИ ВОЛОНТЕРОМ / РЕЄСТРАЦІЯ (З ВИБОРОМ РОЛІ)
+       9. РЕЄСТРАЦІЯ
        ======================================================== -->
   <section id="screen-register" class="screen-view">
     <div class="container register-split-box">
@@ -935,8 +913,7 @@
 
       <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-md);">
         <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Створити акаунт</h2>
-        
-        <!-- ВИБІР РОЛІ (ОРГАНІЗАТОР чи ВОЛОНТЕР) -->
+
         <div style="display: flex; gap: 20px; margin-bottom: 20px; background: var(--gray-light); padding: 12px; border-radius: 8px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 700;">
             <input type="radio" name="role" value="volunteer" checked> Я волонтер
@@ -946,21 +923,22 @@
           </label>
         </div>
 
-        <form onsubmit="handleRegistration(event)">
+        <form id="register-form" onsubmit="handleRegistration(event)">
           <div class="form-row-2">
             <div class="form-group-item"><label>Ім'я *</label><input type="text" id="reg-name" class="input-volo" required placeholder="Введіть ім'я"></div>
             <div class="form-group-item"><label>Прізвище *</label><input type="text" id="reg-surname" class="input-volo" required placeholder="Введіть прізвище"></div>
           </div>
           <div class="form-group-item"><label>Email *</label><input type="email" id="reg-email" class="input-volo" required placeholder="Введіть email"></div>
-          <div class="form-group-item"><label>Телефон</label><input type="text" class="input-volo" placeholder="+380 (__) ___-__-__"></div>
+          <div class="form-group-item"><label>Телефон</label><input type="text" id="reg-phone" class="input-volo" placeholder="+380 (__) ___-__-__"></div>
           <div class="form-group-item">
             <label>Місто</label>
             <select class="input-volo" id="reg-city"><option>Вінниця</option><option>Київ</option><option>Львів</option></select>
           </div>
           <div class="form-group-item">
             <label>Пароль *</label>
-            <input type="password" class="input-volo" required placeholder="••••••••">
+            <input type="password" id="reg-password" class="input-volo" required minlength="6" autocomplete="new-password" placeholder="Мінімум 6 символів">
           </div>
+          <div id="register-message" style="display:none; margin: 12px 0; padding: 12px; border-radius: 8px; font-size: 13px;"></div>
           <div class="checkbox-agree">
             <input type="checkbox" id="reg-agree" required checked>
             <label for="reg-agree">Я погоджуюсь на обробку персональних даних</label>
@@ -975,7 +953,7 @@
   </section>
 
   <!-- ========================================================
-       10. ВХІД 
+       10. ВХІД
        ======================================================== -->
   <section id="screen-login" class="screen-view">
     <div class="container">
@@ -984,24 +962,25 @@
         <h1 style="font-size: 28px; font-weight: 900; margin-bottom: 4px;">Вхід</h1>
         <p style="font-size: 13px; color: var(--gray-muted); margin-bottom: 24px;">Раді бачити вас знову! Увійдіть, щоб подати заявку.</p>
 
-        <form onsubmit="handleLogin(event)">
+        <form id="login-form" onsubmit="handleLogin(event)">
           <div class="form-group-item" style="text-align: left;">
             <label>Email</label>
-            <input type="email" class="input-volo" value="angelina@gmail.com" required>
+            <input type="email" id="login-email" class="input-volo" autocomplete="email" placeholder="Введіть email" required>
           </div>
           <div class="form-group-item" style="text-align: left;">
             <label>Пароль</label>
-            <input type="password" class="input-volo" value="password123" required>
+            <input type="password" id="login-password" class="input-volo" autocomplete="current-password" placeholder="Введіть пароль" required>
           </div>
+          <div id="login-message" style="display:none; margin: 12px 0; padding: 12px; border-radius: 8px; font-size: 13px; text-align: left;"></div>
           <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px;">
             <label><input type="checkbox" checked> Запам'ятати мене</label>
-            <a style="color: var(--gray-muted); text-decoration: none;" onclick="alert('Посилання на відновлення надіслано')">Забули пароль?</a>
+            <a style="color: var(--gray-muted); text-decoration: none; cursor: pointer;" onclick="handlePasswordReset()">Забули пароль?</a>
           </div>
           <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 12px;">Увійти →</button>
         </form>
 
         <div style="margin: 20px 0; font-size: 12px; color: var(--gray-muted);">або</div>
-        <button class="btn-outline" style="width: 100%; justify-content: center;" onclick="handleLogin(event)">Продовжити з Google</button>
+        <button type="button" class="btn-outline" style="width: 100%; justify-content: center;" onclick="handleGoogleLogin()">Продовжити з Google</button>
         <p style="font-size: 12px; color: var(--gray-muted); margin-top: 16px;">
           Немає акаунту? <a style="color: var(--primary); font-weight: 700; cursor: pointer;" onclick="navigateTo('screen-register')">Стати волонтером</a>
         </p>
@@ -1086,14 +1065,13 @@
     </div>
   </div>
 
-  
-  <!-- МОДАЛЬНЕ ВІКНО: СТАТИ СПОНСОРОМ (ПОМИЛКА 5) -->
+  <!-- МОДАЛЬНЕ ВІКНО: СТАТИ СПОНСОРОМ -->
   <div class="modal-how-backdrop" id="modalSponsor">
     <div class="modal-how-card" style="max-width: 500px;">
       <button class="modal-close-x" onclick="closeSponsorModal()">✕</button>
       <h2 style="font-size: 28px; font-weight: 900; margin-bottom: 4px;">Стати спонсором</h2>
       <p style="color: var(--gray-muted); font-size: 13px; margin-bottom: 24px;">Заповніть форму, і ми зв'яжемося з вами щодо партнерства.</p>
-      
+
       <form onsubmit="handleSponsorSubmit(event)">
         <div class="form-group-item"><label>Назва компанії / організації</label><input type="text" class="input-volo" required placeholder="ТОВ «Компанія»"></div>
         <div class="form-group-item"><label>Контактна особа</label><input type="text" class="input-volo" required placeholder="ПІБ"></div>
@@ -1133,14 +1111,19 @@
 
   <!-- Leaflet JS для карти -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Власний скрипт -->
-  <!-- 1. Основний скрипт підключаємо як звичайно (щоб працювала навігація) -->
   <script src="script.js"></script>
 
-  <!-- 2. Firebase виносимо в окремий модуль -->
+  <!-- Firebase: Authentication та Firestore -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import {
+      getFirestore, collection, addDoc, doc, getDoc, setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import {
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      onAuthStateChanged, GoogleAuthProvider, signInWithPopup,
+      sendPasswordResetEmail, signOut
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDbZ7ulyyTDtwifltQwVC3VrhFvDoyRobw",
@@ -1153,20 +1136,120 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+    let isCreatingAccount = false;
 
+    async function getUserProfile(firebaseUser) {
+      const userRef = doc(db, "users", firebaseUser.uid);
+      const userSnapshot = await getDoc(userRef);
+
+      if (userSnapshot.exists()) {
+        return { uid: firebaseUser.uid, ...userSnapshot.data(), email: firebaseUser.email || "" };
+      }
+
+      const nameParts = (firebaseUser.displayName || "").trim().split(/\s+/);
+      const profile = {
+        uid: firebaseUser.uid,
+        name: nameParts[0] || "",
+        surname: nameParts.slice(1).join(" "),
+        email: firebaseUser.email || "",
+        phone: firebaseUser.phoneNumber || "",
+        city: "",
+        role: "volunteer",
+        bio: ""
+      };
+      await setDoc(userRef, {
+        ...profile,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      return profile;
+    }
+
+    window.firebaseRegister = async (profile, password) => {
+      isCreatingAccount = true;
+      try {
+        const credential = await createUserWithEmailAndPassword(auth, profile.email, password);
+        const userProfile = {
+          ...profile,
+          uid: credential.user.uid,
+          email: credential.user.email,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+        await setDoc(doc(db, "users", credential.user.uid), userProfile);
+        return { ...profile, uid: credential.user.uid, email: credential.user.email };
+      } finally {
+        isCreatingAccount = false;
+      }
+    };
+
+    window.firebaseLogin = async (email, password) => {
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      return await getUserProfile(credential.user);
+    };
+
+    window.firebaseGoogleLogin = async () => {
+      const result = await signInWithPopup(auth, googleProvider);
+      return await getUserProfile(result.user);
+    };
+
+    window.firebaseSaveProfile = async (profile) => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Користувач не авторизований.");
+
+      const updatedProfile = {
+        name: profile.name || "",
+        surname: profile.surname || "",
+        email: currentUser.email || profile.email || "",
+        phone: profile.phone || "",
+        city: profile.city || "",
+        role: profile.role || "volunteer",
+        bio: profile.bio || "",
+        uid: currentUser.uid
+      };
+      await setDoc(doc(db, "users", currentUser.uid), {
+        ...updatedProfile,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      return updatedProfile;
+    };
+
+    window.firebaseResetPassword = async (email) => {
+      return await sendPasswordResetEmail(auth, email);
+    };
+
+    window.firebaseLogout = async () => {
+      return await signOut(auth);
+    };
+
+    onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        if (isCreatingAccount) return;
+        try {
+          const profile = await getUserProfile(firebaseUser);
+          if (window.setAuthenticatedUser) window.setAuthenticatedUser(profile);
+        } catch (error) {
+          console.error("Не вдалося завантажити профіль із Firestore:", error);
+        }
+      } else if (window.setAuthenticatedUser) {
+        window.setAuthenticatedUser(null);
+      }
+    });
+
+    // Збереження заявок волонтерів у колекцію applications.
     const applyForm = document.getElementById("apply-form");
     if (applyForm) {
       applyForm.addEventListener("submit", async (event) => {
-        event.preventDefault(); 
-        
+        event.preventDefault();
+
         const submitBtn = applyForm.querySelector('button[type="submit"]');
         const errorBox = document.getElementById("apply-error-box");
-        
         submitBtn.disabled = true;
         submitBtn.textContent = "Відправка...";
-        
+
         try {
-          // Відправляємо в базу даних Firebase
           await addDoc(collection(db, "applications"), {
             volunteerName: document.getElementById("form-name").value,
             volunteerPhone: document.getElementById("form-phone").value,
@@ -1175,18 +1258,17 @@
             city: document.getElementById("form-city").value,
             initiativeDate: document.getElementById("form-date").value,
             status: "registered",
-            appliedAt: new Date().toISOString()
+            appliedAt: new Date().toISOString(),
+            userId: auth.currentUser ? auth.currentUser.uid : null
           });
 
-          // Якщо відправка у Firebase успішна, викликаємо функцію для оновлення кабінету
-          if (window.onSuccessfulFirebaseSubmit) {
-              window.onSuccessfulFirebaseSubmit();
-          }
-          
+          if (window.onSuccessfulFirebaseSubmit) window.onSuccessfulFirebaseSubmit();
         } catch (error) {
-          console.error(error);
-          errorBox.textContent = "Помилка при збереженні бази даних. Перевірте з'єднання.";
-          errorBox.style.display = "block";
+          console.error("Помилка збереження заявки:", error);
+          if (errorBox) {
+            errorBox.textContent = "Не вдалося зберегти заявку. Перевірте підключення та правила Firestore.";
+            errorBox.style.display = "block";
+          }
           submitBtn.disabled = false;
           submitBtn.textContent = "Відправити заявку →";
         }
