@@ -16,8 +16,69 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 4. Перевірка підключення
-console.log("Ура! Firebase підключено успішно!", db);
+// --- КОД ДЛЯ ВІДПРАВКИ ЗАЯВКИ НА ІНІЦІАТИВУ ---
+
+// 1. Знаходимо нашу форму за новим ID
+const applyForm = document.getElementById("apply-form");
+
+// Якщо форма є на сторінці, вішаємо на неї обробник подій
+if (applyForm) {
+  applyForm.addEventListener("submit", async (event) => {
+    // Зупиняємо перезавантаження сторінки
+    event.preventDefault(); 
+
+    // Знаходимо блоки для повідомлень та кнопку
+    const errorBox = document.getElementById("apply-error-box");
+    const successBox = document.getElementById("apply-success-box");
+    const submitBtn = applyForm.querySelector('button[type="submit"]');
+    const leadText = document.getElementById("apply-lead-text");
+
+    // 2. Збираємо дані з полів (звертаємось до ваших ID з HTML)
+    const name = document.getElementById("form-name").value;
+    const phone = document.getElementById("form-phone").value;
+    const email = document.getElementById("form-email").value;
+    const initiative = document.getElementById("form-initiative").value;
+    const city = document.getElementById("form-city").value;
+    const date = document.getElementById("form-date").value;
+    const address = document.getElementById("form-address").value;
+
+    try {
+      // Показуємо, що йде завантаження (щоб користувач не клікав двічі)
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Відправка...";
+      errorBox.style.display = "none";
+
+      // 3. Відправляємо дані у Firebase (в колекцію "applications")
+      await addDoc(collection(db, "applications"), {
+        volunteerName: name,
+        volunteerPhone: phone,
+        volunteerEmail: email,
+        initiativeTitle: initiative,
+        city: city,
+        initiativeDate: date,
+        initiativeAddress: address,
+        status: "registered", // Статус заявки 
+        appliedAt: new Date().toISOString() // Точний час подачі (поточний час)
+      });
+
+      // 4. Якщо все успішно — ховаємо форму і показуємо ВАШ блок успіху
+      applyForm.style.display = "none";
+      leadText.style.display = "none";
+      successBox.style.display = "block";
+
+    } catch (error) {
+      console.error("Помилка відправки заявки: ", error);
+      
+      // Показуємо ваш блок помилки
+      errorBox.textContent = "Сталася помилка при збереженні. Перевірте консоль.";
+      errorBox.style.display = "block";
+      
+      // Повертаємо кнопку до життя, щоб можна було спробувати ще раз
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Відправити заявку →";
+    }
+  });
+}
 
 // Автоматичне визначення поточної дати
 const now = new Date();
