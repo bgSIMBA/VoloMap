@@ -241,6 +241,7 @@ header nav a.active::after { transform: scaleX(1); background: var(--dark); }
   border-radius: 999px;
   box-shadow: var(--shadow-md);
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .stats-row {
