@@ -25,7 +25,7 @@ const initiatives = [
   { id: 6, title: "Теплі речі для ВПО", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(20)}`, targetDate: getFutureDate(20), difficulty: "Легко", image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=500", address: "м. Вінниця, вул. Пирогова, 47", coords: [49.229, 28.450] }
 ];
 
-// ЗАЯВКИ ВОЛОНТЕРА (із збереженням)
+// ЗАЯВКИ ВОЛОНТЕРА
 let userApplications = JSON.parse(localStorage.getItem('volo_user_apps')) || [
   { id: 1, title: "Допомога сім'ям з дітьми", date: `Вінниця • ${getFutureDate(3)}`, status: "Очікує", img: initiatives[0].image, initId: 1 },
   { id: 2, title: "Збір продуктів для ВПО", date: `Вінниця • ${getFutureDate(7)}`, status: "Підтверджено", img: initiatives[2].image, initId: 3 },
@@ -48,17 +48,14 @@ let selectedFormat = 'all';
 let selectedDateMode = 'all';
 let selectedExactDate = null;
 
-// Календар
 let calViewYear = currentYear;
 let calViewMonth = currentMonth;
 
-// Карта Leaflet
 let leafletMap = null;
 let markersLayer = null;
 
-
 // ==========================================
-// ЛОГІКА ДЛЯ ОРГАНІЗАТОРА (ORGANIZER)
+// ЛОГІКА ДЛЯ ОРГАНІЗАТОРА
 // ==========================================
 let myOrgInitiatives = [
   { id: 101, title: "Збір теплого одягу для ВПО", category: "Збір речей", date: getFutureDate(4), status: "Активна", applicants: 12 },
@@ -73,161 +70,186 @@ let volunteerApplications = [
 ];
 
 function updateRoleUI(user) {
-    const isOrg = user.role === 'organizer';
-    
-    document.querySelectorAll('.vol-only').forEach(el => el.style.display = isOrg ? 'none' : 'flex');
-    document.querySelectorAll('.org-only').forEach(el => el.style.display = isOrg ? 'flex' : 'none');
-    
-    if (document.getElementById('screen-cabinet').classList.contains('active')) {
-        const currentActive = document.querySelector('.cab-nav-item.active');
-        if (isOrg && currentActive && currentActive.classList.contains('vol-only')) {
-            switchCabTab('org-initiatives');
-        } else if (!isOrg && currentActive && currentActive.classList.contains('org-only')) {
-            switchCabTab('apps');
-        }
+  const isOrg = user.role === 'organizer';
+
+  document.querySelectorAll('.vol-only').forEach(el => el.style.display = isOrg ? 'none' : 'flex');
+  document.querySelectorAll('.org-only').forEach(el => el.style.display = isOrg ? 'flex' : 'none');
+
+  if (document.getElementById('screen-cabinet').classList.contains('active')) {
+    const currentActive = document.querySelector('.cab-nav-item.active');
+    if (isOrg && currentActive && currentActive.classList.contains('vol-only')) {
+      switchCabTab('org-initiatives');
+    } else if (!isOrg && currentActive && currentActive.classList.contains('org-only')) {
+      switchCabTab('apps');
     }
+  }
 }
 
 function renderOrgInitiatives() {
-    const list = document.getElementById('org-initiatives-list');
-    if (!list) return;
-    
-    list.innerHTML = myOrgInitiatives.map(init => {
-        const badgeClass = init.status === 'Активна' ? 'status-confirmed' : 'status-done';
-        return `
-        <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <span class="tag-badge" style="margin-bottom: 6px;">${init.category}</span>
-                <b style="font-size: 16px; display: block; margin-bottom: 4px;">${init.title}</b>
-                <div style="font-size: 12px; color: var(--gray-muted);">📅 Дедлайн: ${init.date} • 👥 Заявок: ${init.applicants}</div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span class="app-status-badge ${badgeClass}">${init.status}</span>
-                <button class="btn-outline" style="padding: 6px 14px; font-size: 12px;" onclick="switchCabTab('org-apps')">Переглянути заявки</button>
-            </div>
+  const list = document.getElementById('org-initiatives-list');
+  if (!list) return;
+
+  list.innerHTML = myOrgInitiatives.map(init => {
+    const badgeClass = init.status === 'Активна' ? 'status-confirmed' : 'status-done';
+    return `
+      <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <span class="tag-badge" style="margin-bottom: 6px;">${init.category}</span>
+          <b style="font-size: 16px; display: block; margin-bottom: 4px;">${init.title}</b>
+          <div style="font-size: 12px; color: var(--gray-muted);">📅 Дедлайн: ${init.date} • 👥 Заявок: ${init.applicants}</div>
         </div>
-        `;
-    }).join('');
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="app-status-badge ${badgeClass}">${init.status}</span>
+          <button class="btn-outline" style="padding: 6px 14px; font-size: 12px;" onclick="switchCabTab('org-apps')">Переглянути заявки</button>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function handleCreateInitiative(e) {
-    e.preventDefault();
-    
-    const title = document.getElementById('org-init-title').value;
-    const cat = document.getElementById('org-init-cat').value;
-    const diff = document.getElementById('org-init-diff').value;
-    const city = document.getElementById('org-init-city').value;
-    const address = document.getElementById('org-init-address').value;
-    
-    const rawDate = document.getElementById('org-init-date').value;
-    const dObj = new Date(rawDate);
-    const d = dObj.getDate() < 10 ? '0'+dObj.getDate() : dObj.getDate();
-    const m = (dObj.getMonth()+1) < 10 ? '0'+(dObj.getMonth()+1) : (dObj.getMonth()+1);
-    const formattedDate = `До ${d}.${m}.${dObj.getFullYear()}`;
-    
-    const newInit = {
-        id: Date.now(),
-        title: title,
-        category: cat,
-        city: city,
-        format: document.getElementById('org-init-format').value,
-        date: formattedDate,
-        targetDate: `${d}.${m}.${dObj.getFullYear()}`,
-        difficulty: diff,
-        image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500",
-        address: address,
-        coords: [49.232, 28.468] 
-    };
-    
-    initiatives.unshift(newInit);
-    renderMapCards();
-    renderHomeCards();
-    
-    myOrgInitiatives.unshift({
-        id: newInit.id,
-        title: newInit.title,
-        category: newInit.category,
-        date: formattedDate,
-        status: "Активна",
-        applicants: 0
-    });
-    
-    renderOrgInitiatives();
-    
-    const successBox = document.getElementById('org-create-success');
-    successBox.style.display = 'block';
-    
-    setTimeout(() => {
-        successBox.style.display = 'none';
-        e.target.reset();
-        switchCabTab('org-initiatives');
-    }, 2000);
+  e.preventDefault();
+
+  const title = document.getElementById('org-init-title').value;
+  const cat = document.getElementById('org-init-cat').value;
+  const diff = document.getElementById('org-init-diff').value;
+  const city = document.getElementById('org-init-city').value;
+  const address = document.getElementById('org-init-address').value;
+
+  const rawDate = document.getElementById('org-init-date').value;
+  const dObj = new Date(rawDate);
+  const d = dObj.getDate() < 10 ? '0' + dObj.getDate() : dObj.getDate();
+  const m = (dObj.getMonth() + 1) < 10 ? '0' + (dObj.getMonth() + 1) : (dObj.getMonth() + 1);
+  const formattedDate = `До ${d}.${m}.${dObj.getFullYear()}`;
+
+  const newInit = {
+    id: Date.now(),
+    title: title,
+    category: cat,
+    city: city,
+    format: document.getElementById('org-init-format').value,
+    date: formattedDate,
+    targetDate: `${d}.${m}.${dObj.getFullYear()}`,
+    difficulty: diff,
+    image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500",
+    address: address,
+    coords: [49.232, 28.468]
+  };
+
+  initiatives.unshift(newInit);
+  renderMapCards();
+  renderHomeCards();
+
+  myOrgInitiatives.unshift({
+    id: newInit.id,
+    title: newInit.title,
+    category: newInit.category,
+    date: formattedDate,
+    status: "Активна",
+    applicants: 0
+  });
+
+  renderOrgInitiatives();
+
+  const successBox = document.getElementById('org-create-success');
+  successBox.style.display = 'block';
+
+  setTimeout(() => {
+    successBox.style.display = 'none';
+    e.target.reset();
+    switchCabTab('org-initiatives');
+  }, 2000);
 }
 
 function renderOrgApplications() {
-    const list = document.getElementById('org-volunteers-list');
-    if (!list) return;
-    
-    list.innerHTML = volunteerApplications.map(app => {
-        const isWaiting = app.status === 'Очікує';
-        const badgeClass = isWaiting ? 'status-wait' : 'status-confirmed';
-        
-        return `
-        <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <b style="font-size: 15px; display: block; margin-bottom: 2px;">${app.volName}</b>
-                <div style="font-size: 12px; color: var(--gray-muted); margin-bottom: 6px;">📞 ${app.volPhone}</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--dark);">🎯 ${app.initTitle}</div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="app-status-badge ${badgeClass}">${app.status}</span>
-                ${isWaiting ? `
-                <button class="btn-coral" style="padding: 6px 14px; font-size: 12px;" onclick="approveVolunteer(${app.id})">Підтвердити ✓</button>
-                <button class="btn-outline" style="padding: 6px 14px; font-size: 12px; color: #b91c1c; border-color: #b91c1c;" onclick="rejectVolunteer(${app.id})">Відхилити ✕</button>
-                ` : ''}
-            </div>
+  const list = document.getElementById('org-volunteers-list');
+  if (!list) return;
+
+  list.innerHTML = volunteerApplications.map(app => {
+    const isWaiting = app.status === 'Очікує';
+    const badgeClass = isWaiting ? 'status-wait' : 'status-confirmed';
+
+    return `
+      <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <b style="font-size: 15px; display: block; margin-bottom: 2px;">${app.volName}</b>
+          <div style="font-size: 12px; color: var(--gray-muted); margin-bottom: 6px;">📞 ${app.volPhone}</div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--dark);">🎯 ${app.initTitle}</div>
         </div>
-        `;
-    }).join('');
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="app-status-badge ${badgeClass}">${app.status}</span>
+          ${isWaiting ? `
+            <button class="btn-coral" style="padding: 6px 14px; font-size: 12px;" onclick="approveVolunteer(${app.id})">Підтвердити ✓</button>
+            <button class="btn-outline" style="padding: 6px 14px; font-size: 12px; color: #b91c1c; border-color: #b91c1c;" onclick="rejectVolunteer(${app.id})">Відхилити ✕</button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function approveVolunteer(id) {
-    const app = volunteerApplications.find(a => a.id === id);
-    if(app) app.status = 'Підтверджено';
-    renderOrgApplications();
+  const app = volunteerApplications.find(a => a.id === id);
+  if (app) app.status = 'Підтверджено';
+  renderOrgApplications();
 }
 
 function rejectVolunteer(id) {
-    volunteerApplications = volunteerApplications.filter(a => a.id !== id);
-    renderOrgApplications();
+  volunteerApplications = volunteerApplications.filter(a => a.id !== id);
+  renderOrgApplications();
+}
+
+// ==========================================
+// КОРИСТУВАЧ ТА ПРОФІЛЬ
+// ==========================================
+function setAuthenticatedUser(user) {
+  if (user) {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('currentUser');
+  }
+  updateProfileDisplay();
 }
 
 function updateProfileDisplay() {
   const user = JSON.parse(localStorage.getItem('currentUser')) || {
-    name: 'Ангеліна',
-    surname: 'Борецька',
-    email: 'angelina@gmail.com',
-    city: 'Вінниця',
-    bio: 'Студентка, допомагаю дітям та ВПО',
-    phone: '+380 (97) 123 45 67'
+    name: '',
+    surname: '',
+    email: '',
+    city: '',
+    bio: '',
+    phone: '',
+    role: 'volunteer'
   };
 
-  const initials = (user.name[0] + (user.surname ? user.surname[0] : '')).toUpperCase();
+  const fullName = `${user.name || ''} ${user.surname || ''}`.trim() || 'Користувач';
+  const initials = `${(user.name || 'К')[0]}${(user.surname || '')[0] || ''}`.toUpperCase();
 
-  if (document.getElementById('cab-profile-name')) {
-    document.getElementById('cab-profile-name').innerText = `${user.name} ${user.surname}`;
-    document.getElementById('cab-profile-email').innerText = user.email;
-    document.getElementById('cab-sidebar-avatar').innerText = initials;
-  }
-  if (document.getElementById('settings-avatar')) {
-    document.getElementById('settings-avatar').innerText = initials;
-    document.getElementById('set-name').value = user.name;
-    document.getElementById('set-surname').value = user.surname;
-    document.getElementById('set-email').value = user.email;
-    document.getElementById('set-city').value = user.city;
-    document.getElementById('set-bio').value = user.bio || '';
-    document.getElementById('set-phone').value = user.phone || '';
-  }
+  const profileName = document.getElementById('cab-profile-name');
+  const profileEmail = document.getElementById('cab-profile-email');
+  const sidebarAvatar = document.getElementById('cab-sidebar-avatar');
+
+  if (profileName) profileName.innerText = fullName;
+  if (profileEmail) profileEmail.innerText = user.email || 'Увійдіть, щоб переглянути профіль';
+  if (sidebarAvatar) sidebarAvatar.innerText = initials;
+
+  const settingsAvatar = document.getElementById('settings-avatar');
+  if (settingsAvatar) settingsAvatar.innerText = initials;
+
+  const setName = document.getElementById('set-name');
+  const setSurname = document.getElementById('set-surname');
+  const setEmail = document.getElementById('set-email');
+  const setCity = document.getElementById('set-city');
+  const setBio = document.getElementById('set-bio');
+  const setPhone = document.getElementById('set-phone');
+
+  if (setName) setName.value = user.name || '';
+  if (setSurname) setSurname.value = user.surname || '';
+  if (setEmail) setEmail.value = user.email || '';
+  if (setCity) setCity.value = user.city || '';
+  if (setBio) setBio.value = user.bio || '';
+  if (setPhone) setPhone.value = user.phone || '';
+
   updateRoleUI(user);
 }
 
@@ -250,7 +272,9 @@ function init() {
   handleHashRouting();
 }
 
-// 1. КАРТА БЕЗ API KEY
+// ==========================================
+// КАРТА
+// ==========================================
 function initRealMap() {
   if (leafletMap) {
     leafletMap.invalidateSize();
@@ -286,7 +310,9 @@ function updateMapMarkers(filteredInitiatives) {
   });
 }
 
-// 2. ОБМІН БОНУСІВ (НАДІЙНИЙ СТАН КНОПКИ)
+// ==========================================
+// БОНУСИ
+// ==========================================
 function redeemDiscount(btnElement, cost) {
   if (!btnElement.dataset.defaultText) {
     btnElement.dataset.defaultText = btnElement.innerText;
@@ -322,7 +348,6 @@ function redeemDiscount(btnElement, cost) {
   }
 }
 
-// 3. РЕФЕРАЛЬНЕ ПОСИЛАННЯ (ДИНАМІЧНЕ І БЕЗ ALERT)
 function copyReferralLink(btn) {
   const user = JSON.parse(localStorage.getItem('currentUser')) || { name: 'user' };
   const rawName = (user.name || 'user').toLowerCase().trim();
@@ -355,13 +380,17 @@ function copyReferralLink(btn) {
   }, 2500);
 }
 
-// 4 & 5. ДИНАМІЧНИЙ КАЛЕНДАР
+// ==========================================
+// КАЛЕНДАР
+// ==========================================
 function renderCalendar() {
   const labelHeader = document.getElementById('label-date-val');
   const monthTitle = document.getElementById('cal-month-year-title');
+
   if (monthTitle) {
     monthTitle.innerText = `${monthNamesUa[calViewMonth]} ${calViewYear}`;
   }
+
   if (labelHeader && selectedDateMode === 'all') {
     labelHeader.innerText = `${monthNamesUa[calViewMonth]} ${calViewYear}`;
   }
@@ -452,6 +481,8 @@ function chooseDateFilter(mode) {
 
 function renderMapCards() {
   const container = document.getElementById('map-cards-list');
+  if (!container) return;
+
   const filtered = initiatives.filter(item => {
     const c1 = selectedCity === 'Усі міста' || item.city === selectedCity;
     const c2 = selectedCategory === 'Усі напрями' || item.category === selectedCategory;
@@ -475,6 +506,7 @@ function renderMapCards() {
   container.innerHTML = filtered.map(item => {
     const isSaved = savedFavIds.includes(item.id);
     const heartColor = isSaved ? 'var(--primary)' : 'var(--gray-muted)';
+
     return `
       <div class="map-card-sm" onclick="openDetailView(${item.id})">
         <img src="${item.image}" alt="${item.title}">
@@ -492,7 +524,9 @@ function renderMapCards() {
   updateMapMarkers(filtered);
 }
 
-// ROUTING & NAVIGATION
+// ==========================================
+// НАВІГАЦІЯ
+// ==========================================
 function navigateTo(screenId) {
   let hash = '#home';
   if (screenId === 'screen-map') hash = '#map';
@@ -535,6 +569,7 @@ window.addEventListener('popstate', () => handleHashRouting());
 
 function handleHashRouting() {
   const hash = window.location.hash;
+
   if (hash === '#map') showScreen('screen-map');
   else if (hash === '#bonuses') showScreen('screen-bonuses');
   else if (hash === '#cabinet') showScreen('screen-cabinet');
@@ -552,11 +587,14 @@ function handleHashRouting() {
   }
 }
 
-// ФІЛЬТРИ ДРОПДАУНІВ
+// ==========================================
+// ФІЛЬТРИ
+// ==========================================
 function toggleDropdownMenu(menuId) {
   const menu = document.getElementById(menuId);
   const isOpen = menu.classList.contains('open');
   closeAllDropdownMenus();
+
   if (!isOpen) {
     menu.classList.add('open');
     if (menuId === 'menu-city') {
@@ -587,6 +625,7 @@ function chooseCity(city) {
 
 function filterCityDropdown(search) {
   const term = search.toLowerCase().trim();
+
   document.querySelectorAll('#city-options-container .dropdown-option').forEach(opt => {
     const rawText = opt.innerText.replace('✓', '').trim();
     opt.style.display = (term === '' || rawText.toLowerCase().includes(term)) ? 'flex' : 'none';
@@ -621,6 +660,7 @@ function chooseFormat(fmt) {
 function updateDropdownSelectedVisual(menuId, val) {
   document.querySelectorAll(`#${menuId} .dropdown-option`).forEach(opt => {
     const rawText = opt.innerText.replace('✓', '').trim();
+
     if (rawText === val || (rawText.startsWith(val) && val !== 'Усі міста')) {
       opt.classList.add('selected');
       if (!opt.innerHTML.includes('<span>✓</span>')) {
@@ -633,7 +673,9 @@ function updateDropdownSelectedVisual(menuId, val) {
   });
 }
 
-// ГОЛОВНА ТА ДЕТАЛІ
+// ==========================================
+// ГОЛОВНА ТА ДЕТАЛІ ІНІЦІАТИВ
+// ==========================================
 function renderHomeCards() {
   const container = document.getElementById('popular-cards-box');
   container.innerHTML = initiatives.slice(0, 4).map(item => `
@@ -656,6 +698,7 @@ function renderHomeCards() {
 function openDetailView(id, pushHistory = true) {
   selectedInitId = id;
   const item = initiatives.find(i => i.id === id) || initiatives[0];
+
   document.getElementById('d-image').src = item.image;
   document.getElementById('d-title').innerText = item.title;
   document.getElementById('d-badge').innerText = item.category;
@@ -673,7 +716,10 @@ function openDetailView(id, pushHistory = true) {
   if (alreadyApplied) {
     applyBtn.innerText = 'Заявку вже подано ✓';
     applyBtn.classList.replace('btn-coral', 'btn-outline');
-    applyBtn.onclick = () => { navigateTo('screen-cabinet'); switchCabTab('apps'); };
+    applyBtn.onclick = () => {
+      navigateTo('screen-cabinet');
+      switchCabTab('apps');
+    };
   } else {
     applyBtn.innerText = 'Подати заявку →';
     applyBtn.classList.replace('btn-outline', 'btn-coral');
@@ -689,19 +735,21 @@ function openDetailView(id, pushHistory = true) {
 
 function goToApplyCurrent() {
   const item = initiatives.find(i => i.id === selectedInitId) || initiatives[0];
+
   document.getElementById('form-initiative').value = item.title;
   document.getElementById('form-city').value = item.city;
   document.getElementById('form-date').value = item.date.replace('До ', '');
   document.getElementById('form-address').value = item.address;
 
   const user = JSON.parse(localStorage.getItem('currentUser'));
+
   if (user) {
     document.getElementById('form-name').value = `${user.name} ${user.surname}`;
     document.getElementById('form-email').value = user.email;
     if (user.phone) document.getElementById('form-phone').value = user.phone;
   }
 
-  document.getElementById('apply-lead-text').innerText = `Заповни форму, щоб долучитися до ініціативи`;
+  document.getElementById('apply-lead-text').innerText = 'Заповни форму, щоб долучитися до ініціативи';
   document.getElementById('apply-success-box').style.display = 'none';
   navigateTo('screen-apply');
 }
@@ -712,9 +760,11 @@ function toggleSaveCurrent() {
   } else {
     savedFavIds.push(selectedInitId);
   }
+
   localStorage.setItem('volo_favs', JSON.stringify(savedFavIds));
   updateSaveBtnState();
   renderSavedFullGrid();
+
   if (document.getElementById('screen-map').classList.contains('active')) {
     renderMapCards();
   }
@@ -722,6 +772,7 @@ function toggleSaveCurrent() {
 
 function updateSaveBtnState() {
   const btn = document.getElementById('d-save-btn');
+
   if (savedFavIds.includes(selectedInitId)) {
     btn.innerHTML = '❤️ Збережено';
     btn.style.borderColor = 'var(--primary)';
@@ -733,12 +784,13 @@ function updateSaveBtnState() {
   }
 }
 
-// Ця функція оновлює Особистий кабінет і показує успіх ПІСЛЯ відправки у Firebase
+// ==========================================
+// УСПІШНЕ НАДСИЛАННЯ ЗАЯВКИ
+// ==========================================
 window.onSuccessfulFirebaseSubmit = function() {
   const target = document.getElementById('form-initiative').value;
   const item = initiatives.find(i => i.id === selectedInitId) || initiatives[0];
 
-  // Додаємо заявку в локальний список для Особистого кабінету
   userApplications.unshift({
     id: Date.now(),
     title: target,
@@ -747,32 +799,34 @@ window.onSuccessfulFirebaseSubmit = function() {
     img: item.image,
     initId: selectedInitId
   });
-  saveApplicationsToStorage(); 
 
-  // Нараховуємо 50 бонусів
+  saveApplicationsToStorage();
+
   userBonusCount += 50;
   localStorage.setItem('volo_bonuses', userBonusCount);
-  document.querySelectorAll('#bonuses-live-val, #bonuses-live-val-public').forEach(el => el.innerText = userBonusCount);
-  
-  // Ховаємо форму, показуємо ваш блок "Дякуємо!"
+
+  document.querySelectorAll('#bonuses-live-val, #bonuses-live-val-public').forEach(el => {
+    el.innerText = userBonusCount;
+  });
+
   document.getElementById("apply-form").style.display = "none";
   document.getElementById("apply-lead-text").style.display = "none";
   document.getElementById('apply-success-box').style.display = 'block';
 
-  // Через півтори секунди перекидаємо користувача в кабінет переглянути заявку
   setTimeout(() => {
     renderCabinetApps();
     navigateTo('screen-cabinet');
     switchCabTab('apps');
-    
-    // Повертаємо форму у початковий стан для наступних заявок
+
     document.getElementById("apply-form").style.display = "block";
     document.getElementById("apply-lead-text").style.display = "block";
     document.getElementById('apply-success-box').style.display = 'none';
   }, 1500);
 };
 
-// КАБІНЕТ
+// ==========================================
+// ОСОБИСТИЙ КАБІНЕТ
+// ==========================================
 function switchCabTab(tab) {
   document.querySelectorAll('.cab-pane-view').forEach(p => p.style.display = 'none');
   document.querySelectorAll('.cab-nav-item').forEach(b => b.classList.remove('active'));
@@ -812,16 +866,18 @@ function switchCabTab(tab) {
 function filterAppStatus(status) {
   currentAppFilter = status;
   document.querySelectorAll('#cab-pane-apps .toggle-cap-btn').forEach(b => b.classList.remove('active'));
+
   if (status === 'all') document.getElementById('filter-app-all').classList.add('active');
   if (status === 'Очікує') document.getElementById('filter-app-wait').classList.add('active');
   if (status === 'Підтверджено') document.getElementById('filter-app-conf').classList.add('active');
   if (status === 'Завершено') document.getElementById('filter-app-done').classList.add('active');
+
   renderCabinetApps();
 }
 
 function cancelApplication(id) {
   userApplications = userApplications.filter(a => a.id !== id);
-  saveApplicationsToStorage(); // Зберігаємо після видалення
+  saveApplicationsToStorage();
   renderCabinetApps();
   openDetailView(selectedInitId, false);
 }
@@ -829,6 +885,7 @@ function cancelApplication(id) {
 function renderCabinetApps() {
   const appList = document.getElementById('cab-my-apps-list');
   const filtered = userApplications.filter(a => currentAppFilter === 'all' || a.status === currentAppFilter);
+
   document.getElementById('cnt-app-all').innerText = userApplications.length;
 
   appList.innerHTML = filtered.map(app => {
@@ -855,6 +912,7 @@ function renderCabinetApps() {
   }).join('');
 
   const favPreview = document.getElementById('cab-saved-preview');
+
   favPreview.innerHTML = initiatives.slice(0, 2).map(item => `
     <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="openDetailView(${item.id})">
       <div style="display: flex; align-items: center; gap: 12px;">
@@ -872,6 +930,7 @@ function renderCabinetApps() {
 function renderSavedFullGrid() {
   const grid = document.getElementById('favs-full-grid');
   const savedItems = initiatives.filter(i => savedFavIds.includes(i.id));
+
   document.getElementById('fav-count-lead').innerText = savedItems.length;
 
   grid.innerHTML = savedItems.map(item => `
@@ -889,11 +948,13 @@ function renderSavedFullGrid() {
 
 function renderHistory() {
   const container = document.getElementById('history-items-list');
+
   const list = [
     { title: "Допомога сім'ям з дітьми", date: getFutureDate(-2), hours: "+4 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[0].image, id: 1 },
     { title: "Підтримка літніх людей у Вінниці", date: getFutureDate(-5), hours: "+6 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[3].image, id: 4 },
     { title: "Прибирання території", date: getFutureDate(-8), hours: "+4 год", loc: "м. Вінниця, вул. Соборна", img: initiatives[4].image, id: 5 }
   ];
+
   container.innerHTML = list.map(h => `
     <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 16px;">
@@ -912,61 +973,230 @@ function renderHistory() {
   `).join('');
 }
 
-// РЕЄСТРАЦІЯ ТА НАЛАШТУВАННЯ
-function handleRegistration(e) {
-  e.preventDefault();
-  const firstName = document.getElementById('reg-name').value;
-  const lastName = document.getElementById('reg-surname').value;
-  const email = document.getElementById('reg-email').value;
-  const city = document.getElementById('reg-city').value;
-  const role = document.querySelector('input[name="role"]:checked').value;
+// ==========================================
+// РЕЄСТРАЦІЯ, АВТОРИЗАЦІЯ ТА ПРОФІЛЬ
+// ==========================================
+function showAuthMessage(type, message, isError = true) {
+  const boxId = type === 'register' ? 'register-message' : 'login-message';
+  const box = document.getElementById(boxId);
 
-  const user = {
+  if (!box) return;
+
+  box.textContent = message;
+  box.style.display = 'block';
+  box.style.color = isError ? '#b91c1c' : '#15803d';
+  box.style.background = isError ? '#fef2f2' : '#f0fdf4';
+}
+
+function getFirebaseErrorMessage(error) {
+  const code = error && error.code ? error.code : '';
+
+  const messages = {
+    'auth/email-already-in-use': 'Цей email уже зареєстрований. Увійдіть у свій акаунт.',
+    'auth/invalid-email': 'Введіть коректну адресу електронної пошти.',
+    'auth/weak-password': 'Пароль має містити щонайменше 6 символів.',
+    'auth/invalid-credential': 'Неправильний email або пароль.',
+    'auth/user-not-found': 'Акаунт із таким email не знайдено.',
+    'auth/wrong-password': 'Неправильний пароль.',
+    'auth/too-many-requests': 'Забагато спроб. Спробуйте пізніше.',
+    'auth/network-request-failed': 'Немає з’єднання з інтернетом. Перевірте мережу.',
+    'permission-denied': 'Firebase відхилив запис. Перевірте правила доступу Firestore.',
+    'auth/popup-closed-by-user': 'Вікно входу Google було закрито.'
+  };
+
+  return messages[code] || (error && error.message) || 'Сталася невідома помилка. Перевірте консоль браузера.';
+}
+
+async function handleRegistration(e) {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  const button = form.querySelector('button[type="submit"]');
+
+  const firstName = document.getElementById('reg-name').value.trim();
+  const lastName = document.getElementById('reg-surname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const city = document.getElementById('reg-city').value;
+  const password = document.getElementById('reg-password').value;
+  const roleInput = document.querySelector('input[name="role"]:checked');
+
+  if (!roleInput) {
+    showAuthMessage('register', 'Оберіть тип акаунта.');
+    return;
+  }
+
+  if (!window.firebaseRegister) {
+    showAuthMessage('register', 'Firebase ще завантажується. Оновіть сторінку та спробуйте ще раз.');
+    return;
+  }
+
+  const profile = {
     name: firstName,
     surname: lastName,
     email: email,
+    phone: phone,
     city: city,
-    role: role,
-    bio: '',
-    phone: ''
+    role: roleInput.value,
+    bio: ''
   };
 
-  localStorage.setItem('currentUser', JSON.stringify(user));
-  updateProfileDisplay();
-  navigateTo('screen-cabinet');
+  button.disabled = true;
+  button.textContent = 'Створення акаунта...';
+
+  const box = document.getElementById('register-message');
+  if (box) box.style.display = 'none';
+
+  try {
+    const savedProfile = await window.firebaseRegister(profile, password);
+    setAuthenticatedUser(savedProfile);
+    form.reset();
+    navigateTo('screen-cabinet');
+  } catch (error) {
+    console.error('Помилка реєстрації:', error);
+    showAuthMessage('register', getFirebaseErrorMessage(error));
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Зареєструватися →';
+  }
 }
 
-function handleLogin(e) {
-  e.preventDefault();
-  navigateTo('screen-cabinet');
+async function handleLogin(e) {
+  if (e) e.preventDefault();
+
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const form = document.getElementById('login-form');
+  const button = form ? form.querySelector('button[type="submit"]') : null;
+
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
+
+  if (!window.firebaseLogin) {
+    showAuthMessage('login', 'Firebase ще завантажується. Оновіть сторінку та спробуйте ще раз.');
+    return;
+  }
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Вхід...';
+  }
+
+  const box = document.getElementById('login-message');
+  if (box) box.style.display = 'none';
+
+  try {
+    const profile = await window.firebaseLogin(email, password);
+    setAuthenticatedUser(profile);
+    navigateTo('screen-cabinet');
+  } catch (error) {
+    console.error('Помилка входу:', error);
+    showAuthMessage('login', getFirebaseErrorMessage(error));
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Увійти →';
+    }
+  }
 }
 
-function saveProfileSettings(e) {
+async function handleGoogleLogin() {
+  if (!window.firebaseGoogleLogin) {
+    showAuthMessage('login', 'Firebase ще завантажується. Оновіть сторінку та спробуйте ще раз.');
+    return;
+  }
+
+  try {
+    const profile = await window.firebaseGoogleLogin();
+    setAuthenticatedUser(profile);
+    navigateTo('screen-cabinet');
+  } catch (error) {
+    console.error('Помилка входу через Google:', error);
+    showAuthMessage('login', getFirebaseErrorMessage(error));
+  }
+}
+
+async function handlePasswordReset(emailOverride) {
+  const email = (emailOverride || document.getElementById('login-email').value).trim();
+
+  if (!email) {
+    showAuthMessage('login', 'Спочатку введіть email, на який надіслати посилання для відновлення пароля.');
+    return;
+  }
+
+  try {
+    await window.firebaseResetPassword(email);
+    showAuthMessage('login', 'Посилання для відновлення пароля надіслано на вашу пошту.', false);
+  } catch (error) {
+    console.error('Помилка відновлення пароля:', error);
+    showAuthMessage('login', getFirebaseErrorMessage(error));
+  }
+}
+
+async function handleLogout() {
+  try {
+    await window.firebaseLogout();
+    setAuthenticatedUser(null);
+    navigateTo('screen-home');
+  } catch (error) {
+    console.error('Помилка виходу:', error);
+    alert(getFirebaseErrorMessage(error));
+  }
+}
+
+async function saveProfileSettings(e) {
   e.preventDefault();
-  const user = {
-    name: document.getElementById('set-name').value,
-    surname: document.getElementById('set-surname').value,
-    email: document.getElementById('set-email').value,
-    city: document.getElementById('set-city').value,
-    bio: document.getElementById('set-bio').value,
-    phone: document.getElementById('set-phone').value,
-    role: 'volunteer' // Організатор теж оновлює тут
+
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+
+  if (!user || !window.firebaseSaveProfile) {
+    alert('Спочатку увійдіть у свій акаунт.');
+    return;
+  }
+
+  const updatedUser = {
+    ...user,
+    name: document.getElementById('set-name').value.trim(),
+    surname: document.getElementById('set-surname').value.trim(),
+    city: document.getElementById('set-city').value.trim(),
+    bio: document.getElementById('set-bio').value.trim(),
+    phone: document.getElementById('set-phone').value.trim()
   };
 
-  localStorage.setItem('currentUser', JSON.stringify(user));
-  updateProfileDisplay();
+  const button = e.currentTarget.querySelector('button[type="submit"]');
+  button.disabled = true;
+  button.textContent = 'Збереження...';
 
-  const box = document.getElementById('settings-success-box');
-  box.style.display = 'block';
-  setTimeout(() => box.style.display = 'none', 3000);
+  try {
+    const savedProfile = await window.firebaseSaveProfile(updatedUser);
+    setAuthenticatedUser(savedProfile);
+
+    const box = document.getElementById('settings-success-box');
+    box.textContent = 'Профіль успішно збережено у Firebase!';
+    box.style.display = 'block';
+
+    setTimeout(() => box.style.display = 'none', 3000);
+  } catch (error) {
+    console.error('Помилка збереження профілю:', error);
+    alert(getFirebaseErrorMessage(error));
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Зберегти зміни';
+  }
 }
 
+// ==========================================
+// КОНТАКТНА ФОРМА
+// ==========================================
 function handleContactSubmit(e) {
   e.preventDefault();
+
   const btn = e.target.querySelector('button[type="submit"]');
   const ogText = btn.innerText;
+
   btn.innerText = "Надіслано ✓";
   btn.style.background = "var(--badge-green-text)";
+
   setTimeout(() => {
     e.target.reset();
     btn.innerText = ogText;
@@ -974,10 +1204,13 @@ function handleContactSubmit(e) {
   }, 3000);
 }
 
-// МОДАЛКИ
+// ==========================================
+// МОДАЛЬНІ ВІКНА
+// ==========================================
 function openHowItWorksModal() {
   document.getElementById('modalHowItWorks').classList.add('open');
 }
+
 function closeHowItWorksModal() {
   document.getElementById('modalHowItWorks').classList.remove('open');
 }
@@ -985,14 +1218,18 @@ function closeHowItWorksModal() {
 function openSponsorModal() {
   document.getElementById('modalSponsor').classList.add('open');
 }
+
 function closeSponsorModal() {
   document.getElementById('modalSponsor').classList.remove('open');
 }
+
 function handleSponsorSubmit(e) {
   e.preventDefault();
+
   const btn = e.target.querySelector('button[type="submit"]');
   btn.innerText = "Запит надіслано ✓";
   btn.style.background = "var(--badge-green-text)";
+
   setTimeout(() => {
     closeSponsorModal();
     btn.innerText = "Надіслати запит →";
