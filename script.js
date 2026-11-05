@@ -6,7 +6,7 @@ const currentDay = now.getDate();
 
 const monthNamesUa = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
 
-// Генерація динамічних дат для ініціатив від поточного дня
+// Генерація динамічних дат для ініціатив
 function getFutureDate(daysAhead) {
   const d = new Date();
   d.setDate(d.getDate() + daysAhead);
@@ -25,12 +25,16 @@ const initiatives = [
   { id: 6, title: "Теплі речі для ВПО", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(20)}`, targetDate: getFutureDate(20), difficulty: "Легко", image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=500", address: "м. Вінниця, вул. Пирогова, 47", coords: [49.229, 28.450] }
 ];
 
-// Заявки
-let userApplications = [
+// ЗАЯВКИ ВОЛОНТЕРА (із збереженням)
+let userApplications = JSON.parse(localStorage.getItem('volo_user_apps')) || [
   { id: 1, title: "Допомога сім'ям з дітьми", date: `Вінниця • ${getFutureDate(3)}`, status: "Очікує", img: initiatives[0].image, initId: 1 },
   { id: 2, title: "Збір продуктів для ВПО", date: `Вінниця • ${getFutureDate(7)}`, status: "Підтверджено", img: initiatives[2].image, initId: 3 },
   { id: 3, title: "Психологічна підтримка", date: `Вінниця • ${getFutureDate(5)}`, status: "Підтверджено", img: initiatives[1].image, initId: 2 }
 ];
+
+function saveApplicationsToStorage() {
+  localStorage.setItem('volo_user_apps', JSON.stringify(userApplications));
+}
 
 let savedFavIds = JSON.parse(localStorage.getItem('volo_favs')) || [1, 2, 3, 4, 6];
 let userBonusCount = parseInt(localStorage.getItem('volo_bonuses')) || 320;
@@ -71,11 +75,9 @@ let volunteerApplications = [
 function updateRoleUI(user) {
     const isOrg = user.role === 'organizer';
     
-    // Toggle nav items
     document.querySelectorAll('.vol-only').forEach(el => el.style.display = isOrg ? 'none' : 'flex');
     document.querySelectorAll('.org-only').forEach(el => el.style.display = isOrg ? 'flex' : 'none');
     
-    // Auto-switch to correct default tab when loading cabinet
     if (document.getElementById('screen-cabinet').classList.contains('active')) {
         const currentActive = document.querySelector('.cab-nav-item.active');
         if (isOrg && currentActive && currentActive.classList.contains('vol-only')) {
@@ -117,7 +119,6 @@ function handleCreateInitiative(e) {
     const city = document.getElementById('org-init-city').value;
     const address = document.getElementById('org-init-address').value;
     
-    // Parse date from YYYY-MM-DD to DD.MM.YYYY
     const rawDate = document.getElementById('org-init-date').value;
     const dObj = new Date(rawDate);
     const d = dObj.getDate() < 10 ? '0'+dObj.getDate() : dObj.getDate();
@@ -133,17 +134,15 @@ function handleCreateInitiative(e) {
         date: formattedDate,
         targetDate: `${d}.${m}.${dObj.getFullYear()}`,
         difficulty: diff,
-        image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500", // дефолтне фото
+        image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500",
         address: address,
-        coords: [49.232, 28.468] // default coords for Vinnytsia center
+        coords: [49.232, 28.468] 
     };
     
-    // Add to public map
     initiatives.unshift(newInit);
     renderMapCards();
     renderHomeCards();
     
-    // Add to organizer dashboard
     myOrgInitiatives.unshift({
         id: newInit.id,
         title: newInit.title,
@@ -260,7 +259,6 @@ function initRealMap() {
 
   leafletMap = L.map('real-map-container').setView([49.2331, 28.4682], 13);
 
-  // Використовуємо відкритий шар Humanitarian OSM (HOT)
   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap contributors, Humanitarian OpenStreetMap Team'
@@ -758,6 +756,7 @@ function handleFormSubmission(e) {
     img: item.image,
     initId: selectedInitId
   });
+  saveApplicationsToStorage(); // Зберігаємо нову заявку
 
   userBonusCount += 50;
   localStorage.setItem('volo_bonuses', userBonusCount);
@@ -777,36 +776,34 @@ function switchCabTab(tab) {
 
   if (tab === 'apps') {
     document.getElementById('cab-pane-apps').style.display = 'block';
-    document.getElementById('tab-btn-apps').classList.add('active');
+    if (document.getElementById('tab-btn-apps')) document.getElementById('tab-btn-apps').classList.add('active');
   } else if (tab === 'favs') {
     document.getElementById('cab-pane-favs').style.display = 'block';
-    document.getElementById('tab-btn-favs').classList.add('active');
+    if (document.getElementById('tab-btn-favs')) document.getElementById('tab-btn-favs').classList.add('active');
   } else if (tab === 'history') {
     document.getElementById('cab-pane-history').style.display = 'block';
-    document.getElementById('tab-btn-history').classList.add('active');
+    if (document.getElementById('tab-btn-history')) document.getElementById('tab-btn-history').classList.add('active');
   } else if (tab === 'hours') {
     document.getElementById('cab-pane-hours').style.display = 'block';
-    document.getElementById('tab-btn-hours').classList.add('active');
+    if (document.getElementById('tab-btn-hours')) document.getElementById('tab-btn-hours').classList.add('active');
   } else if (tab === 'bonuses') {
     document.getElementById('cab-pane-bonuses').style.display = 'block';
-    document.getElementById('tab-btn-bonuses').classList.add('active');
+    if (document.getElementById('tab-btn-bonuses')) document.getElementById('tab-btn-bonuses').classList.add('active');
   } else if (tab === 'settings') {
     document.getElementById('cab-pane-settings').style.display = 'block';
-    document.getElementById('tab-btn-settings').classList.add('active');
-  }
+    if (document.getElementById('tab-btn-settings')) document.getElementById('tab-btn-settings').classList.add('active');
   } else if (tab === 'org-initiatives') {
     document.getElementById('cab-pane-org-initiatives').style.display = 'block';
-    document.getElementById('tab-btn-org-initiatives').classList.add('active');
+    if (document.getElementById('tab-btn-org-initiatives')) document.getElementById('tab-btn-org-initiatives').classList.add('active');
     renderOrgInitiatives();
   } else if (tab === 'org-create') {
     document.getElementById('cab-pane-org-create').style.display = 'block';
-    document.getElementById('tab-btn-org-create').classList.add('active');
+    if (document.getElementById('tab-btn-org-create')) document.getElementById('tab-btn-org-create').classList.add('active');
   } else if (tab === 'org-apps') {
     document.getElementById('cab-pane-org-apps').style.display = 'block';
-    document.getElementById('tab-btn-org-apps').classList.add('active');
+    if (document.getElementById('tab-btn-org-apps')) document.getElementById('tab-btn-org-apps').classList.add('active');
     renderOrgApplications();
   }
-
 }
 
 function filterAppStatus(status) {
@@ -821,6 +818,7 @@ function filterAppStatus(status) {
 
 function cancelApplication(id) {
   userApplications = userApplications.filter(a => a.id !== id);
+  saveApplicationsToStorage(); // Зберігаємо після видалення
   renderCabinetApps();
   openDetailView(selectedInitId, false);
 }
@@ -949,7 +947,7 @@ function saveProfileSettings(e) {
     city: document.getElementById('set-city').value,
     bio: document.getElementById('set-bio').value,
     phone: document.getElementById('set-phone').value,
-    role: 'volunteer'
+    role: 'volunteer' // Організатор теж оновлює тут
   };
 
   localStorage.setItem('currentUser', JSON.stringify(user));
