@@ -357,16 +357,121 @@
           </div>
 
           <div class="cab-nav-menu">
-            <div class="cab-nav-item active" id="tab-btn-apps" onclick="switchCabTab('apps')">📁 Мої заявки</div>
-            <div class="cab-nav-item" id="tab-btn-favs" onclick="switchCabTab('favs')">❤️ Збережені ініціативи</div>
-            <div class="cab-nav-item" id="tab-btn-history" onclick="switchCabTab('history')">🕒 Історія участі</div>
-            <div class="cab-nav-item" id="tab-btn-hours" onclick="switchCabTab('hours')">⏱️ Години волонтерства</div>
-            <div class="cab-nav-item" id="tab-btn-bonuses" onclick="switchCabTab('bonuses')">🎁 Бонуси</div>
+            <!-- Волонтерські вкладки -->
+            <div class="cab-nav-item vol-only active" id="tab-btn-apps" onclick="switchCabTab('apps')">📁 Мої заявки</div>
+            <div class="cab-nav-item vol-only" id="tab-btn-favs" onclick="switchCabTab('favs')">❤️ Збережені ініціативи</div>
+            <div class="cab-nav-item vol-only" id="tab-btn-history" onclick="switchCabTab('history')">🕒 Історія участі</div>
+            <div class="cab-nav-item vol-only" id="tab-btn-hours" onclick="switchCabTab('hours')">⏱️ Години волонтерства</div>
+            <div class="cab-nav-item vol-only" id="tab-btn-bonuses" onclick="switchCabTab('bonuses')">🎁 Бонуси</div>
+            
+            <!-- Організаторські вкладки -->
+            <div class="cab-nav-item org-only" id="tab-btn-org-initiatives" style="display: none;" onclick="switchCabTab('org-initiatives')">🏢 Мої ініціативи</div>
+            <div class="cab-nav-item org-only" id="tab-btn-org-create" style="display: none;" onclick="switchCabTab('org-create')">➕ Створити ініціативу</div>
+            <div class="cab-nav-item org-only" id="tab-btn-org-apps" style="display: none;" onclick="switchCabTab('org-apps')">👥 Заявки волонтерів</div>
+
+            <!-- Спільні вкладки -->
             <div class="cab-nav-item" id="tab-btn-settings" onclick="switchCabTab('settings')">⚙️ Налаштування</div>
           </div>
         </div>
 
         <div class="cab-content-pane">
+
+          <!-- ================= ОРГАНІЗАТОР: МОЇ ІНІЦІАТИВИ ================= -->
+          <div id="cab-pane-org-initiatives" class="cab-pane-view" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <h1 class="cab-page-title" style="margin-bottom: 4px;">Мої ініціативи</h1>
+                    <p style="color: var(--gray-muted); font-size: 14px;">Керуйте створеними волонтерськими зборами та завданнями</p>
+                </div>
+                <button class="btn-coral" onclick="switchCabTab('org-create')">➕ Створити нову</button>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;" id="org-initiatives-list">
+                <!-- Динамічний рендер -->
+            </div>
+          </div>
+
+          <!-- ================= ОРГАНІЗАТОР: СТВОРИТИ ІНІЦІАТИВУ ================= -->
+          <div id="cab-pane-org-create" class="cab-pane-view" style="display: none;">
+            <h1 class="cab-page-title">Створити ініціативу</h1>
+            
+            <div id="org-create-success" style="display: none; background: #f0fdf4; color: #15803d; font-weight: 700; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                🎉 Ініціативу успішно створено та опубліковано на мапі!
+            </div>
+            
+            <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 36px;">
+              <form onsubmit="handleCreateInitiative(event)">
+                <div class="form-group-item">
+                  <label>Назва ініціативи *</label>
+                  <input type="text" id="org-init-title" class="input-volo" required placeholder="Наприклад: Збір теплих речей для ВПО">
+                </div>
+                
+                <div class="form-row-2">
+                  <div class="form-group-item">
+                    <label>Категорія *</label>
+                    <select id="org-init-cat" class="input-volo" required>
+                      <option>Збір речей</option>
+                      <option>Психологічна підтримка</option>
+                      <option>Продукти</option>
+                      <option>Допомога людям</option>
+                      <option>Екологія</option>
+                    </select>
+                  </div>
+                  <div class="form-group-item">
+                    <label>Складність *</label>
+                    <select id="org-init-diff" class="input-volo" required>
+                      <option>Легко</option>
+                      <option>Середньо</option>
+                      <option>Складно</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group-item">
+                    <label>Місто *</label>
+                    <input type="text" id="org-init-city" class="input-volo" value="Вінниця" required>
+                  </div>
+                  <div class="form-group-item">
+                    <label>Точна адреса або посилання *</label>
+                    <input type="text" id="org-init-address" class="input-volo" required placeholder="Вул. Соборна, 25">
+                  </div>
+                </div>
+                
+                <div class="form-row-2">
+                  <div class="form-group-item">
+                    <label>Формат</label>
+                    <select id="org-init-format" class="input-volo">
+                      <option>Офлайн</option>
+                      <option>Онлайн</option>
+                    </select>
+                  </div>
+                  <div class="form-group-item">
+                    <label>Дедлайн / Дата проведення *</label>
+                    <input type="date" id="org-init-date" class="input-volo" required>
+                  </div>
+                </div>
+
+                <div class="form-group-item">
+                  <label>Детальний опис</label>
+                  <textarea id="org-init-desc" class="input-volo" rows="4" placeholder="Опишіть, яка саме допомога потрібна..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px; margin-top: 10px;">Опублікувати ініціативу →</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- ================= ОРГАНІЗАТОР: ЗАЯВКИ ВОЛОНТЕРІВ ================= -->
+          <div id="cab-pane-org-apps" class="cab-pane-view" style="display: none;">
+            <h1 class="cab-page-title">Заявки волонтерів</h1>
+            <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;">Переглядайте та підтверджуйте заявки волонтерів на ваші ініціативи</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px;" id="org-volunteers-list">
+                <!-- Динамічний рендер -->
+            </div>
+          </div>
+
           <!-- 5.1: Мої заявки -->
           <div id="cab-pane-apps" class="cab-pane-view">
             <h1 class="cab-page-title">Мої заявки</h1>

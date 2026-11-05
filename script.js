@@ -52,6 +52,157 @@ let calViewMonth = currentMonth;
 let leafletMap = null;
 let markersLayer = null;
 
+
+// ==========================================
+// ЛОГІКА ДЛЯ ОРГАНІЗАТОРА (ORGANIZER)
+// ==========================================
+let myOrgInitiatives = [
+  { id: 101, title: "Збір теплого одягу для ВПО", category: "Збір речей", date: getFutureDate(4), status: "Активна", applicants: 12 },
+  { id: 102, title: "Фасування продуктових наборів", category: "Продукти", date: getFutureDate(10), status: "Активна", applicants: 5 },
+  { id: 103, title: "Плетіння маскувальних сіток", category: "Допомога людям", date: getFutureDate(-2), status: "Завершена", applicants: 24 }
+];
+
+let volunteerApplications = [
+  { id: 201, initTitle: "Збір теплого одягу для ВПО", volName: "Олексій Петров", volPhone: "+380 97 111 2233", status: "Очікує" },
+  { id: 202, initTitle: "Фасування продуктових наборів", volName: "Марія Іванова", volPhone: "+380 63 444 5566", status: "Очікує" },
+  { id: 203, initTitle: "Збір теплого одягу для ВПО", volName: "Іван Сидоров", volPhone: "+380 50 777 8899", status: "Підтверджено" }
+];
+
+function updateRoleUI(user) {
+    const isOrg = user.role === 'organizer';
+    
+    // Toggle nav items
+    document.querySelectorAll('.vol-only').forEach(el => el.style.display = isOrg ? 'none' : 'flex');
+    document.querySelectorAll('.org-only').forEach(el => el.style.display = isOrg ? 'flex' : 'none');
+    
+    // Auto-switch to correct default tab when loading cabinet
+    if (document.getElementById('screen-cabinet').classList.contains('active')) {
+        const currentActive = document.querySelector('.cab-nav-item.active');
+        if (isOrg && currentActive && currentActive.classList.contains('vol-only')) {
+            switchCabTab('org-initiatives');
+        } else if (!isOrg && currentActive && currentActive.classList.contains('org-only')) {
+            switchCabTab('apps');
+        }
+    }
+}
+
+function renderOrgInitiatives() {
+    const list = document.getElementById('org-initiatives-list');
+    if (!list) return;
+    
+    list.innerHTML = myOrgInitiatives.map(init => {
+        const badgeClass = init.status === 'Активна' ? 'status-confirmed' : 'status-done';
+        return `
+        <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <span class="tag-badge" style="margin-bottom: 6px;">${init.category}</span>
+                <b style="font-size: 16px; display: block; margin-bottom: 4px;">${init.title}</b>
+                <div style="font-size: 12px; color: var(--gray-muted);">📅 Дедлайн: ${init.date} • 👥 Заявок: ${init.applicants}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="app-status-badge ${badgeClass}">${init.status}</span>
+                <button class="btn-outline" style="padding: 6px 14px; font-size: 12px;" onclick="switchCabTab('org-apps')">Переглянути заявки</button>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+function handleCreateInitiative(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('org-init-title').value;
+    const cat = document.getElementById('org-init-cat').value;
+    const diff = document.getElementById('org-init-diff').value;
+    const city = document.getElementById('org-init-city').value;
+    const address = document.getElementById('org-init-address').value;
+    
+    // Parse date from YYYY-MM-DD to DD.MM.YYYY
+    const rawDate = document.getElementById('org-init-date').value;
+    const dObj = new Date(rawDate);
+    const d = dObj.getDate() < 10 ? '0'+dObj.getDate() : dObj.getDate();
+    const m = (dObj.getMonth()+1) < 10 ? '0'+(dObj.getMonth()+1) : (dObj.getMonth()+1);
+    const formattedDate = `До ${d}.${m}.${dObj.getFullYear()}`;
+    
+    const newInit = {
+        id: Date.now(),
+        title: title,
+        category: cat,
+        city: city,
+        format: document.getElementById('org-init-format').value,
+        date: formattedDate,
+        targetDate: `${d}.${m}.${dObj.getFullYear()}`,
+        difficulty: diff,
+        image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500", // дефолтне фото
+        address: address,
+        coords: [49.232, 28.468] // default coords for Vinnytsia center
+    };
+    
+    // Add to public map
+    initiatives.unshift(newInit);
+    renderMapCards();
+    renderHomeCards();
+    
+    // Add to organizer dashboard
+    myOrgInitiatives.unshift({
+        id: newInit.id,
+        title: newInit.title,
+        category: newInit.category,
+        date: formattedDate,
+        status: "Активна",
+        applicants: 0
+    });
+    
+    renderOrgInitiatives();
+    
+    const successBox = document.getElementById('org-create-success');
+    successBox.style.display = 'block';
+    
+    setTimeout(() => {
+        successBox.style.display = 'none';
+        e.target.reset();
+        switchCabTab('org-initiatives');
+    }, 2000);
+}
+
+function renderOrgApplications() {
+    const list = document.getElementById('org-volunteers-list');
+    if (!list) return;
+    
+    list.innerHTML = volunteerApplications.map(app => {
+        const isWaiting = app.status === 'Очікує';
+        const badgeClass = isWaiting ? 'status-wait' : 'status-confirmed';
+        
+        return `
+        <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <b style="font-size: 15px; display: block; margin-bottom: 2px;">${app.volName}</b>
+                <div style="font-size: 12px; color: var(--gray-muted); margin-bottom: 6px;">📞 ${app.volPhone}</div>
+                <div style="font-size: 13px; font-weight: 700; color: var(--dark);">🎯 ${app.initTitle}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="app-status-badge ${badgeClass}">${app.status}</span>
+                ${isWaiting ? `
+                <button class="btn-coral" style="padding: 6px 14px; font-size: 12px;" onclick="approveVolunteer(${app.id})">Підтвердити ✓</button>
+                <button class="btn-outline" style="padding: 6px 14px; font-size: 12px; color: #b91c1c; border-color: #b91c1c;" onclick="rejectVolunteer(${app.id})">Відхилити ✕</button>
+                ` : ''}
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+function approveVolunteer(id) {
+    const app = volunteerApplications.find(a => a.id === id);
+    if(app) app.status = 'Підтверджено';
+    renderOrgApplications();
+}
+
+function rejectVolunteer(id) {
+    volunteerApplications = volunteerApplications.filter(a => a.id !== id);
+    renderOrgApplications();
+}
+
 function updateProfileDisplay() {
   const user = JSON.parse(localStorage.getItem('currentUser')) || {
     name: 'Ангеліна',
@@ -78,6 +229,7 @@ function updateProfileDisplay() {
     document.getElementById('set-bio').value = user.bio || '';
     document.getElementById('set-phone').value = user.phone || '';
   }
+  updateRoleUI(user);
 }
 
 function init() {
@@ -642,6 +794,19 @@ function switchCabTab(tab) {
     document.getElementById('cab-pane-settings').style.display = 'block';
     document.getElementById('tab-btn-settings').classList.add('active');
   }
+  } else if (tab === 'org-initiatives') {
+    document.getElementById('cab-pane-org-initiatives').style.display = 'block';
+    document.getElementById('tab-btn-org-initiatives').classList.add('active');
+    renderOrgInitiatives();
+  } else if (tab === 'org-create') {
+    document.getElementById('cab-pane-org-create').style.display = 'block';
+    document.getElementById('tab-btn-org-create').classList.add('active');
+  } else if (tab === 'org-apps') {
+    document.getElementById('cab-pane-org-apps').style.display = 'block';
+    document.getElementById('tab-btn-org-apps').classList.add('active');
+    renderOrgApplications();
+  }
+
 }
 
 function filterAppStatus(status) {
