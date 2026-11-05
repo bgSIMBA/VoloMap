@@ -53,6 +53,8 @@ let calViewMonth = currentMonth;
 
 let leafletMap = null;
 let markersLayer = null;
+let heroMap = null;
+let heroMarkersLayer = null;
 
 // ==========================================
 // ЛОГІКА ДЛЯ ОРГАНІЗАТОРА
@@ -139,6 +141,7 @@ function handleCreateInitiative(e) {
   initiatives.unshift(newInit);
   renderMapCards();
   renderHomeCards();
+  renderHeroMapMarkers();
 
   myOrgInitiatives.unshift({
     id: newInit.id,
@@ -256,6 +259,7 @@ function updateProfileDisplay() {
 function init() {
   updateProfileDisplay();
   renderHomeCards();
+  initHeroMap();
   renderMapCards();
   renderCabinetApps();
   renderSavedFullGrid();
@@ -275,6 +279,43 @@ function init() {
 // ==========================================
 // КАРТА
 // ==========================================
+function buildPopupHtml(item) {
+  return `
+    <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
+      <b style="font-size: 14px;">${item.title}</b>
+      <div style="font-size: 12px; color: #707b8b; margin: 4px 0;">📍 ${item.address}</div>
+      <button onclick="openDetailView(${item.id})" style="background: #e65135; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; width: 100%;">Детальніше</button>
+    </div>
+  `;
+}
+
+function initHeroMap() {
+  const el = document.getElementById('hero-map-container');
+  if (!el || heroMap) return;
+
+  heroMap = L.map(el, {
+    scrollWheelZoom: false   // щоб карта не перехоплювала прокрутку сторінки
+  }).setView([49.2331, 28.4682], 12);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors, Humanitarian OpenStreetMap Team'
+  }).addTo(heroMap);
+
+  heroMarkersLayer = L.layerGroup().addTo(heroMap);
+  renderHeroMapMarkers();
+}
+
+function renderHeroMapMarkers() {
+  if (!heroMarkersLayer) return;
+  heroMarkersLayer.clearLayers();
+
+  initiatives.forEach(item => {
+    if (item.coords) {
+      L.marker(item.coords).addTo(heroMarkersLayer).bindPopup(buildPopupHtml(item));
+    }
+  });
+}
 function initRealMap() {
   if (leafletMap) {
     leafletMap.invalidateSize();
@@ -558,11 +599,19 @@ function showScreen(screenId) {
   if (screenId === 'screen-sponsors') document.getElementById('nav-btn-sponsors').classList.add('active');
   if (screenId === 'screen-about') document.getElementById('nav-btn-about').classList.add('active');
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (screenId === 'screen-map') {
     setTimeout(initRealMap, 100);
   }
+
+  // ⬇⬇⬇ ДОДАЙ ЦЕ ⬇⬇⬇
+  if (screenId === 'screen-home') {
+    setTimeout(() => {
+      if (heroMap) heroMap.invalidateSize();
+    }, 100);
+  }
+  // ⬆⬆⬆ кінець нового коду ⬆⬆⬆
 }
 
 window.addEventListener('popstate', () => handleHashRouting());
