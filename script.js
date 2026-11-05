@@ -1,4 +1,3 @@
-
 // Автоматичне визначення поточної дати
 const now = new Date();
 const currentYear = now.getFullYear();
@@ -772,30 +771,6 @@ window.onSuccessfulFirebaseSubmit = function() {
     document.getElementById('apply-success-box').style.display = 'none';
   }, 1500);
 };
-
-  const target = document.getElementById('form-initiative').value;
-  const item = initiatives.find(i => i.id === selectedInitId) || initiatives[0];
-
-  userApplications.unshift({
-    id: Date.now(),
-    title: target,
-    date: `${item.city} • Сьогодні`,
-    status: "Очікує",
-    img: item.image,
-    initId: selectedInitId
-  });
-  saveApplicationsToStorage(); // Зберігаємо нову заявку
-
-  userBonusCount += 50;
-  localStorage.setItem('volo_bonuses', userBonusCount);
-  document.querySelectorAll('#bonuses-live-val, #bonuses-live-val-public').forEach(el => el.innerText = userBonusCount);
-  document.getElementById('apply-success-box').style.display = 'block';
-
-  setTimeout(() => {
-    renderCabinetApps();
-    navigateTo('screen-cabinet');
-  }, 1400);
-}
 
 // КАБІНЕТ
 function switchCabTab(tab) {
