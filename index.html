@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VOLOMAP — Волонтерська платформа</title>
+  <title>VOLOMAP — Волонтерська платформа допомоги постраждалим від війни</title>
   
+  <!-- Шрифти -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- Leaflet CSS -->
+  <!-- Leaflet CSS для реальної карти -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -30,11 +32,15 @@
         <a id="nav-btn-sponsors" onclick="navigateTo('screen-sponsors')">Спонсори</a>
         <a id="nav-btn-about" onclick="navigateTo('screen-about')">Про нас</a>
       </nav>
-      <button class="btn-header-vol" onclick="navigateTo('screen-register')">Стати волонтером →</button>
+      <button class="btn-header-vol" onclick="navigateTo('screen-register')">
+        Стати волонтером →
+      </button>
     </div>
   </header>
 
-  <!-- 1. ГОЛОВНА -->
+  <!-- ========================================================
+       1. ГОЛОВНА СТОРІНКА
+       ======================================================== -->
   <section id="screen-home" class="screen-view active">
     <div class="container">
       <div class="hero-box">
@@ -49,10 +55,17 @@
         </div>
 
         <div class="hero-map-decor">
+          <svg style="position: absolute; width: 100%; height: 100%;" viewBox="0 0 500 400" fill="none">
+            <path d="M50 180 Q 150 90, 300 130 T 450 180 T 380 320 T 150 340 Z" fill="#bfe1d0" opacity="0.6"/>
+            <path d="M120 220 Q 220 140, 340 180 T 400 280 T 180 300 Z" fill="#9cd3b7" opacity="0.7"/>
+          </svg>
           <div class="badge-pop" style="top: 30px; left: 30px; background: #121d2c; color: white;">💙 Вінниця волонтерить</div>
           <div class="badge-pop" style="top: 30px; right: 30px;">Подільський р-н • 👥 8 902</div>
           <div class="badge-pop" style="bottom: 30px; left: 30px; color: var(--primary);">⭐ +50 бонусів</div>
           <div class="badge-pop" style="bottom: 30px; right: 30px;">❤️ Разом сильніші</div>
+          <div style="background: white; padding: 4px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 3;">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100" style="width: 50px; height: 50px; border-radius: 50%; display: block;" alt="avatar">
+          </div>
         </div>
       </div>
 
@@ -66,7 +79,9 @@
 
     <div class="ticker-belt">
       <div class="container">
-        <span>Вінниця • Разом ❤️ Допомагай • Волонтерь • Вінниця • Разом ❤️ Допомагай</span>
+        <span>Вінниця • Разом ❤️ Допомагай • Волонтерь</span>
+        <span>Вінниця • Разом ❤️ Допомагай • Волонтерь</span>
+        <span>Вінниця • Разом ❤️ Допомагай • Волонтерь</span>
       </div>
     </div>
 
@@ -79,7 +94,9 @@
     </div>
   </section>
 
-  <!-- 2. МАПА ІНІЦІАТИВ -->
+  <!-- ========================================================
+       2. МАПА ІНІЦІАТИВ (РЕАЛЬНА КАРТА LEAFLET + ДРОПДАУНИ)
+       ======================================================== -->
   <section id="screen-map" class="screen-view">
     <div class="container">
       <div class="map-screen-head">
@@ -105,6 +122,8 @@
               <div class="dropdown-option" onclick="chooseCity('Вінниця')">Вінниця</div>
               <div class="dropdown-option" onclick="chooseCity('Київ')">Київ</div>
               <div class="dropdown-option" onclick="chooseCity('Львів')">Львів</div>
+              <div class="dropdown-option" onclick="chooseCity('Дніпро')">Дніпро</div>
+              <div class="dropdown-option" onclick="chooseCity('Одеса')">Одеса</div>
             </div>
           </div>
         </div>
@@ -143,6 +162,8 @@
           </div>
         </div>
 
+        <!-- NEW: Calendar Filter Widget -->
+                <!-- Віджет календаря з перемиканням місяців -->
         <div class="dropdown-widget" id="widget-date">
           <div class="filter-btn-f" onclick="toggleDropdownMenu('menu-date')">
             <div>
@@ -153,34 +174,29 @@
           </div>
           <div class="dropdown-popup-list" id="menu-date" style="padding: 16px; min-width: 280px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <button type="button" style="border:none; background:none; cursor:pointer; font-weight:900; font-size:16px;" onclick="calPrevMonth(event)">&lt;</button>
+                <button type="button" style="border:none; background:none; cursor:pointer; font-weight:900; font-size:16px; padding:4px 8px;" onclick="calPrevMonth(event)">&lt;</button>
                 <b id="cal-month-year-title" style="font-size: 14px;">Листопад 2026</b>
-                <button type="button" style="border:none; background:none; cursor:pointer; font-weight:900; font-size:16px;" onclick="calNextMonth(event)">&gt;</button>
+                <button type="button" style="border:none; background:none; cursor:pointer; font-weight:900; font-size:16px; padding:4px 8px;" onclick="calNextMonth(event)">&gt;</button>
             </div>
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: var(--gray-muted);">
                 <span>Пн</span><span>Вв</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Нд</span>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 13px;" id="calendar-days-mock"></div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 13px;" id="calendar-days-mock">
+            </div>
             <div style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;">
                 <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('today')">Сьогодні</button>
                 <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('week')">Цього тижня</button>
-                <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('all')">Усі дати</button>
+                <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 11px; flex: 1;" onclick="chooseDateFilter('month')">Цього місяця</button>
             </div>
+            <button type="button" class="btn-coral" style="width: 100%; justify-content: center; padding: 10px; margin-top: 12px; font-size: 13px;" onclick="chooseDateFilter('all')">Показати всі дати</button>
           </div>
         </div>
-      </div>
-
-      <!-- Контейнер зі списком та картою Leaflet -->
-      <div class="map-split-box">
-        <div class="map-side-list" id="map-cards-list"></div>
-        <div class="map-visual-box">
-          <div id="real-map-container" style="width: 100%; height: 100%; min-height: 600px;"></div>
-        </div>
-      </div>
     </div>
   </section>
 
-  <!-- 3. ДЕТАЛЬНА СТОРІНКА -->
+  <!-- ========================================================
+       3. СТОРІНКА ІНІЦІАТИВИ
+       ======================================================== -->
   <section id="screen-detail" class="screen-view">
     <div class="container detail-layout">
       <div class="back-btn-row">
@@ -190,21 +206,43 @@
       <div class="detail-grid">
         <div class="detail-main-col">
           <img id="d-image" class="detail-banner-img" src="" alt="preview">
+          <div class="detail-gallery">
+            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=200" alt="thumb1">
+            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=200" alt="thumb2">
+            <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=200" alt="thumb3">
+          </div>
+
           <span class="tag-badge" id="d-badge">Допомога людям</span>
-          <h1 class="detail-title" id="d-title">Назва ініціативи</h1>
+          <h1 class="detail-title" id="d-title">Допомога сім'ям з дітьми, які постраждали від війни</h1>
           
           <div class="detail-meta-list">
-            <div id="d-loc">📍 Вінниця</div>
-            <div id="d-date">📅 До 10 листопада 2026</div>
+            <div id="d-loc">📍 Вінниця, Старе місто</div>
+            <div id="d-date">📅 До 10 листопада 2025</div>
             <div>⏱️ 10:00 – 18:00 • <span id="d-format">Офлайн</span></div>
             <div>Складність: <span id="d-diff">Середньо ●●○</span></div>
           </div>
 
-          <p class="detail-desc-text" id="d-desc">Детальний опис ініціативи.</p>
+          <p class="detail-desc-text" id="d-desc">
+            Потрібна допомога із гуманітарного супроводу для сімей із дітьми, які постраждали від війни. Збережено продукти, одяг, засоби гігієни та дитячі товари.
+          </p>
+
+          <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 12px;">Що потрібно:</h3>
+          <ul class="needed-list">
+            <li>➔ Продукти харчування довготривалого зберігання</li>
+            <li>➔ Теплий дитячий одяг та взуття</li>
+            <li>➔ Засоби особистої гігієни</li>
+            <li>➔ Волонтери для сортування та адресної видачі</li>
+          </ul>
 
           <div class="detail-act-row">
             <button id="btn-apply-detail" class="btn-coral" onclick="goToApplyCurrent()">Подати заявку →</button>
             <button class="btn-outline" id="d-save-btn" onclick="toggleSaveCurrent()">🔖 Зберегти</button>
+          </div>
+
+          <div class="organizer-card">
+            <h4>Контакти організатора</h4>
+            <p style="font-size: 13px; color: var(--gray-muted);">Благодійний фонд «Разом»</p>
+            <p style="font-size: 14px; font-weight: 700; margin-top: 4px;">+38 (067) 125 45 07 • razom@help.ua</p>
           </div>
         </div>
 
@@ -213,204 +251,687 @@
             <small>Місце проведення</small>
             <p id="d-side-address">м. Вінниця, вул. Соборна, 25</p>
           </div>
+          <div class="side-info-card">
+            <small>Дата та час</small>
+            <p>10 листопада 2025 • 10:00 – 18:00</p>
+          </div>
+          <div class="side-info-card">
+            <small>Місто</small>
+            <p>Вінниця</p>
+          </div>
+          <div class="side-info-card">
+            <small>Складність завдань</small>
+            <p>●●○ Середньо</p>
+            <small style="margin-top: 6px; text-transform: none; font-size: 12px; color: var(--gray-muted);">Середня: потрібні базові навички, 4–6 годин активної роботи.</small>
+          </div>
+          <div class="side-info-card">
+            <small>Необхідні навички</small>
+            <p>Бажання допомагати, відповідальність</p>
+          </div>
+          <div style="background: white; border-radius: var(--radius-md); padding: 24px; text-align: center; border: 1px solid var(--gray-border);">
+            <div style="font-size: 32px; margin-bottom: 8px;">💙</div>
+            <b>Разом ми можемо більше</b>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 4. ФОРМА ЗАЯВКИ -->
+  <!-- ========================================================
+       4. ПОДАТИ ЗАЯВКУ (ФОРМА)
+       ======================================================== -->
   <section id="screen-apply" class="screen-view">
     <div class="container">
       <div class="apply-page-box">
         <h1>Подати заявку</h1>
-        <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;" id="apply-lead-text">Заповни форму для участі</p>
-        <div id="apply-error-box" style="display: none; margin-bottom: 16px; color: #b91c1c; font-size: 13px; font-weight: 700; background: #fef2f2; padding: 12px; border-radius: 8px;"></div>
+        <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;" id="apply-lead-text">
+          Заповни форму, щоб долучитися до ініціативи
+        </p>
+
+        <!-- Блок помилки дублювання заявок -->
+        <div id="apply-error-box" style="display: none; margin-bottom: 16px; color: #b91c1c; font-size: 13px; font-weight: 700; background: #fef2f2; padding: 12px; border-radius: 8px; text-align: center;"></div>
         
-        <form onsubmit="handleFormSubmission(event)">
-          <div class="form-group-item"><label>Ім'я *</label><input type="text" id="form-name" class="input-volo" required></div>
-          <div class="form-group-item"><label>Телефон *</label><input type="text" id="form-phone" class="input-volo" required placeholder="+380"></div>
-          <div class="form-group-item"><label>Ініціатива</label><input type="text" id="form-initiative" class="input-volo" readonly></div>
-          <div class="form-row-2">
-            <div class="form-group-item"><label>Місто</label><input type="text" id="form-city" class="input-volo" readonly></div>
-            <div class="form-group-item"><label>Дата</label><input type="text" id="form-date" class="input-volo" readonly></div>
+        <form id="apply-form">
+          <div class="form-group-item">
+            <label>Ім'я *</label>
+            <input type="text" id="form-name" class="input-volo" required placeholder="Введіть ваше ім'я">
           </div>
-          <div class="form-group-item"><label>Адреса</label><input type="text" id="form-address" class="input-volo" readonly></div>
-          <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px; margin-top: 10px;">Відправити заявку →</button>
+          <div class="form-group-item">
+            <label>Телефон *</label>
+            <input type="text" id="form-phone" class="input-volo" required placeholder="+380 (__) ___-__-__">
+          </div>
+          <div class="form-group-item">
+            <label>Email</label>
+            <input type="email" id="form-email" class="input-volo" placeholder="Введіть email">
+          </div>
+          <div class="form-group-item">
+            <label>Виберіть ініціативу</label>
+            <input type="text" id="form-initiative" class="input-volo" readonly value="">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group-item">
+              <label>Місто</label>
+              <input type="text" id="form-city" class="input-volo" value="" readonly>
+            </div>
+            <div class="form-group-item">
+              <label>Дата участі</label>
+              <input type="text" id="form-date" class="input-volo" value="" readonly>
+            </div>
+          </div>
+          <div class="form-group-item">
+            <label>Місце проведення</label>
+            <input type="text" id="form-address" class="input-volo" value="" readonly>
+          </div>
+          <div class="checkbox-agree">
+            <input type="checkbox" id="agree-check" required checked>
+            <label for="agree-check">Я погоджуюсь на обробку персональних даних</label>
+          </div>
+
+          <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px;">
+            Відправити заявку →
+          </button>
         </form>
-        <div id="apply-success-box" style="display: none; margin-top: 24px; background: var(--gray-light); padding: 20px; text-align: center; border-radius: 8px;">
-          <b>Заявку успішно надіслано! (+50 бонусів)</b>
+
+        <div id="apply-success-box" style="display: none; margin-top: 24px; background: var(--gray-light); padding: 24px; border-radius: var(--radius-md); text-align: center;">
+          <div style="font-size: 26px; margin-bottom: 6px;">🎉</div>
+          <b>Дякуємо!</b>
+          <p style="font-size: 13px; color: var(--gray-muted); margin-top: 4px;">Ваша заявка успішно надіслана. Невдовзі з вами зв'яжеться координатор.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 5. КАБІНЕТ -->
+  <!-- ========================================================
+       5. ОСОБИСТИЙ КАБІНЕТ
+       ======================================================== -->
   <section id="screen-cabinet" class="screen-view">
     <div class="container">
       <div class="cabinet-wrapper">
         <div>
           <div class="cab-user-summary">
-            <div class="cab-avatar-circle" id="cab-sidebar-avatar">ВК</div>
+            <div class="cab-avatar-circle" id="cab-sidebar-avatar">АБ</div>
             <div class="cab-user-info">
-              <b id="cab-profile-name">Користувач</b>
-              <span id="cab-profile-email">user@gmail.com</span>
+              <b id="cab-profile-name">Ангеліна Борецька</b>
+              <span id="cab-profile-email">angelina@gmail.com</span>
             </div>
           </div>
 
           <div class="cab-nav-menu">
+            <!-- Волонтерські вкладки -->
             <div class="cab-nav-item vol-only active" id="tab-btn-apps" onclick="switchCabTab('apps')">📁 Мої заявки</div>
             <div class="cab-nav-item vol-only" id="tab-btn-favs" onclick="switchCabTab('favs')">❤️ Збережені ініціативи</div>
             <div class="cab-nav-item vol-only" id="tab-btn-history" onclick="switchCabTab('history')">🕒 Історія участі</div>
+            <div class="cab-nav-item vol-only" id="tab-btn-hours" onclick="switchCabTab('hours')">⏱️ Години волонтерства</div>
             <div class="cab-nav-item vol-only" id="tab-btn-bonuses" onclick="switchCabTab('bonuses')">🎁 Бонуси</div>
             
+            <!-- Організаторські вкладки -->
             <div class="cab-nav-item org-only" id="tab-btn-org-initiatives" style="display: none;" onclick="switchCabTab('org-initiatives')">🏢 Мої ініціативи</div>
             <div class="cab-nav-item org-only" id="tab-btn-org-create" style="display: none;" onclick="switchCabTab('org-create')">➕ Створити ініціативу</div>
             <div class="cab-nav-item org-only" id="tab-btn-org-apps" style="display: none;" onclick="switchCabTab('org-apps')">👥 Заявки волонтерів</div>
 
+            <!-- Спільні вкладки -->
             <div class="cab-nav-item" id="tab-btn-settings" onclick="switchCabTab('settings')">⚙️ Налаштування</div>
           </div>
         </div>
 
         <div class="cab-content-pane">
-          <!-- Організаторські вкладки -->
+
+          <!-- ================= ОРГАНІЗАТОР: МОЇ ІНІЦІАТИВИ ================= -->
           <div id="cab-pane-org-initiatives" class="cab-pane-view" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h1 class="cab-page-title">Мої ініціативи</h1>
+                <div>
+                    <h1 class="cab-page-title" style="margin-bottom: 4px;">Мої ініціативи</h1>
+                    <p style="color: var(--gray-muted); font-size: 14px;">Керуйте створеними волонтерськими зборами та завданнями</p>
+                </div>
                 <button class="btn-coral" onclick="switchCabTab('org-create')">➕ Створити нову</button>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 16px;" id="org-initiatives-list"></div>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;" id="org-initiatives-list">
+                <!-- Динамічний рендер -->
+            </div>
           </div>
 
+          <!-- ================= ОРГАНІЗАТОР: СТВОРИТИ ІНІЦІАТИВУ ================= -->
           <div id="cab-pane-org-create" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Створити ініціативу</h1>
+            
             <div id="org-create-success" style="display: none; background: #f0fdf4; color: #15803d; font-weight: 700; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
                 🎉 Ініціативу успішно створено та опубліковано на мапі!
             </div>
+            
             <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 36px;">
               <form onsubmit="handleCreateInitiative(event)">
-                <div class="form-group-item"><label>Назва *</label><input type="text" id="org-init-title" class="input-volo" required></div>
+                <div class="form-group-item">
+                  <label>Назва ініціативи *</label>
+                  <input type="text" id="org-init-title" class="input-volo" required placeholder="Наприклад: Збір теплих речей для ВПО">
+                </div>
+                
                 <div class="form-row-2">
                   <div class="form-group-item">
                     <label>Категорія *</label>
-                    <select id="org-init-cat" class="input-volo">
+                    <select id="org-init-cat" class="input-volo" required>
                       <option>Збір речей</option>
-                      <option>Продукти</option>
                       <option>Психологічна підтримка</option>
+                      <option>Продукти</option>
                       <option>Допомога людям</option>
                       <option>Екологія</option>
                     </select>
                   </div>
                   <div class="form-group-item">
-                    <label>Складність</label>
-                    <select id="org-init-diff" class="input-volo">
+                    <label>Складність *</label>
+                    <select id="org-init-diff" class="input-volo" required>
                       <option>Легко</option>
                       <option>Середньо</option>
                       <option>Складно</option>
                     </select>
                   </div>
                 </div>
+
                 <div class="form-row-2">
-                  <div class="form-group-item"><label>Місто</label><input type="text" id="org-init-city" class="input-volo" value="Вінниця"></div>
-                  <div class="form-group-item"><label>Адреса</label><input type="text" id="org-init-address" class="input-volo" required placeholder="вул. Соборна, 25"></div>
+                  <div class="form-group-item">
+                    <label>Місто *</label>
+                    <input type="text" id="org-init-city" class="input-volo" value="Вінниця" required>
+                  </div>
+                  <div class="form-group-item">
+                    <label>Точна адреса або посилання *</label>
+                    <input type="text" id="org-init-address" class="input-volo" required placeholder="Вул. Соборна, 25">
+                  </div>
                 </div>
+                
                 <div class="form-row-2">
-                  <div class="form-group-item"><label>Формат</label><select id="org-init-format" class="input-volo"><option>Офлайн</option><option>Онлайн</option></select></div>
-                  <div class="form-group-item"><label>Дедлайн</label><input type="date" id="org-init-date" class="input-volo" required></div>
+                  <div class="form-group-item">
+                    <label>Формат</label>
+                    <select id="org-init-format" class="input-volo">
+                      <option>Офлайн</option>
+                      <option>Онлайн</option>
+                    </select>
+                  </div>
+                  <div class="form-group-item">
+                    <label>Дедлайн / Дата проведення *</label>
+                    <input type="date" id="org-init-date" class="input-volo" required>
+                  </div>
                 </div>
+
+                <div class="form-group-item">
+                  <label>Детальний опис</label>
+                  <textarea id="org-init-desc" class="input-volo" rows="4" placeholder="Опишіть, яка саме допомога потрібна..."></textarea>
+                </div>
+                
                 <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px; margin-top: 10px;">Опублікувати ініціативу →</button>
               </form>
             </div>
           </div>
 
+          <!-- ================= ОРГАНІЗАТОР: ЗАЯВКИ ВОЛОНТЕРІВ ================= -->
           <div id="cab-pane-org-apps" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Заявки волонтерів</h1>
-            <div style="display: flex; flex-direction: column; gap: 14px;" id="org-volunteers-list"></div>
+            <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;">Переглядайте та підтверджуйте заявки волонтерів на ваші ініціативи</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px;" id="org-volunteers-list">
+                <!-- Динамічний рендер -->
+            </div>
           </div>
 
-          <!-- Волонтерські вкладки -->
+          <!-- 5.1: Мої заявки -->
           <div id="cab-pane-apps" class="cab-pane-view">
-            <h1 class="cab-page-title">Мої заявки (<span id="cnt-app-all">0</span>)</h1>
-            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;" id="cab-my-apps-list"></div>
-            <h3>Збережені</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" id="cab-saved-preview"></div>
+            <h1 class="cab-page-title">Мої заявки</h1>
+            <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 20px;">Усі ваші заявки на волонтерські ініціативи у Вінниці</p>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
+              <button class="toggle-cap-btn active" id="filter-app-all" onclick="filterAppStatus('all')">Усі • <span id="cnt-app-all">6</span></button>
+              <button class="toggle-cap-btn" id="filter-app-wait" onclick="filterAppStatus('Очікує')">Очікують • 2</button>
+              <button class="toggle-cap-btn" id="filter-app-conf" onclick="filterAppStatus('Підтверджено')">Підтверджено • 3</button>
+              <button class="toggle-cap-btn" id="filter-app-done" onclick="filterAppStatus('Завершено')">Завершені • 1</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px;" id="cab-my-apps-list"></div>
+
+            <div class="section-subtitle-bar">
+              <h3>Збережені ініціативи</h3>
+              <a style="font-size: 13px; font-weight: 700; cursor: pointer;" onclick="switchCabTab('favs')">Переглянути всі →</a>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px;" id="cab-saved-preview"></div>
+
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;">Досягнення</h3>
+            <div class="achievements-row">
+              <div class="achieve-card"><div class="achieve-icon">🏅</div><div class="achieve-title">Перша заявка</div><div class="achieve-status" style="color: var(--badge-green-text); font-weight: 700;">Отримано</div></div>
+              <div class="achieve-card"><div class="achieve-icon">🔥</div><div class="achieve-title">7 днів поспіль</div><div class="achieve-status" style="color: var(--badge-green-text); font-weight: 700;">Отримано</div></div>
+              <div class="achieve-card"><div class="achieve-icon">🤍</div><div class="achieve-title">100 годин</div><div class="achieve-status">Заблоковано</div></div>
+              <div class="achieve-card"><div class="achieve-icon">⭐</div><div class="achieve-title">Топ-10 Вінниці</div><div class="achieve-status">Заблоковано</div></div>
+            </div>
           </div>
 
+          <!-- 5.2: Збережені ініціативи -->
           <div id="cab-pane-favs" class="cab-pane-view" style="display: none;">
-            <h1 class="cab-page-title">Збережені ініціативи</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <div>
+                <h1 style="font-size: 32px; font-weight: 900;">Збережені ініціативи</h1>
+                <p style="font-size: 13px; color: var(--gray-muted);">У вас <span id="fav-count-lead">8</span> збережених волонтерських ініціатив</p>
+              </div>
+              <input type="text" class="input-volo" style="width: 240px;" placeholder="🔍 Пошук">
+            </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;" id="favs-full-grid"></div>
           </div>
 
+          <!-- 5.3: Історія участі -->
           <div id="cab-pane-history" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Історія участі</h1>
+            <div class="cab-stat-strip">
+              <div class="cab-stat-item"><b>24</b><span>загалом годин</span></div>
+              <div class="cab-stat-item"><b>5</b><span>завершені завдання</span></div>
+              <div class="cab-stat-item"><b>320</b><span>отримано бонусів</span></div>
+            </div>
             <div style="display: flex; flex-direction: column; gap: 14px;" id="history-items-list"></div>
           </div>
 
+          <!-- 5.4: Години волонтерства -->
+          <div id="cab-pane-hours" class="cab-pane-view" style="display: none;">
+            <h1 class="cab-page-title">Мої години волонтерства</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
+              <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 30px;">
+                <span style="background: #eaf8f0; color: #1d9255; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">↗ +15% за минулий місяць</span>
+                <div style="font-size: 64px; font-weight: 900; line-height: 1.1; margin: 16px 0 8px;">124</div>
+                <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;">годин волонтерства за останні 12 місяців</p>
+                <button class="btn-coral" style="width: 100%; justify-content: center;" onclick="alert('Звіт успішно сформовано та завантажено в PDF!')">📥 Завантажити звіт</button>
+              </div>
+
+              <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 24px;">
+                <h4 style="margin-bottom: 20px;">Статистика по місяцях</h4>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 160px; padding-top: 20px;">
+                  <div style="text-align: center;"><div style="width: 16px; height: 70px; background: #1a2a44; border-radius: 4px; margin: 0 auto 6px;"></div><small style="font-size: 10px;">Січ</small></div>
+                  <div style="text-align: center;"><div style="width: 16px; height: 50px; background: #1a2a44; border-radius: 4px; margin: 0 auto 6px;"></div><small style="font-size: 10px;">Лют</small></div>
+                  <div style="text-align: center;"><div style="width: 16px; height: 110px; background: #1a2a44; border-radius: 4px; margin: 0 auto 6px;"></div><small style="font-size: 10px;">Бер</small></div>
+                  <div style="text-align: center;"><div style="width: 16px; height: 80px; background: #1a2a44; border-radius: 4px; margin: 0 auto 6px;"></div><small style="font-size: 10px;">Кві</small></div>
+                  <div style="text-align: center;"><div style="width: 16px; height: 130px; background: #1a2a44; border-radius: 4px; margin: 0 auto 6px;"></div><small style="font-size: 10px;">Тра</small></div>
+                  <div style="text-align: center;"><div style="width: 16px; height: 95px; background: #1a2a44; border-radius: 4px; margin: 0 auto 6px;"></div><small style="font-size: 10px;">Чер</small></div>
+                  <div style="text-align: center;"><div style="width: 16px; height: 140px; background: #1a2a44; border-radius: 4px; margin: 0 auto 6px;"></div><small style="font-size: 10px;">Лип</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5.5: Бонуси (Кабінет - виправлений) -->
           <div id="cab-pane-bonuses" class="cab-pane-view" style="display: none;">
             <h1 class="cab-page-title">Бонуси</h1>
-            <p>Баланс: <b id="bonuses-live-val" style="font-size: 26px; color: var(--primary);">320</b></p>
+            <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 24px;">Допомагай, отримуй бонуси, обмінюй на знижки та підтримуй тих, хто цього потребує.</p>
+
+            <div class="level-progress-card">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <b>🏆 Ваш рівень: Активіст</b>
+                <small style="color: var(--gray-muted); font-weight: 700;">До рівня «Герой»: ще 80 бонусів</small>
+              </div>
+              <div class="level-bar-bg"><div class="level-bar-fill"></div></div>
+              <div class="level-pills-row">
+                <span class="level-pill active">🌱 Новачок ✓</span>
+                <span class="level-pill active">🔥 Активіст ✓</span>
+                <span class="level-pill locked">⭐ Герой 🔒</span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 24px; margin-bottom: 30px;">
+              <div class="bonus-balance-card" style="padding: 30px; display: flex; flex-direction: column; justify-content: center;">
+                <small style="color: #94a3b8; text-transform: uppercase;">Ваш баланс бонусів</small>
+                <div style="display: flex; align-items: center; gap: 16px; margin: 12px 0;">
+                    <div style="font-size: 40px;">🎁</div>
+                    <div class="bonus-balance-val" style="margin-top: 0;">320</div>
+                </div>
+                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 16px;">бонусів доступно для використання</p>
+                <button class="btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; width: 100%; justify-content: center;" onclick="navigateTo('screen-bonuses')">Як отримати більше?</button>
+              </div>
+              <div style="padding: 24px; background: transparent;">
+                <b style="font-size: 18px; display: block; margin-bottom: 20px;">Як отримати бонуси?</b>
+                <div style="display: flex; justify-content: space-between; text-align: center; gap: 10px;">
+                  <div>
+                    <div class="bonus-step-ico" style="background: white;">📝</div>
+                    <b style="font-size: 12px; display: block; height: 32px;">Подай заявку на ініціативу</b>
+                    <div style="color: var(--dark); font-weight: 800; font-size: 12px; margin-top: 4px;">+50 бонусів</div>
+                  </div>
+                  <div>
+                    <div class="bonus-step-ico" style="background: white;">📅</div>
+                    <b style="font-size: 12px; display: block; height: 32px;">Візьми участь у заході</b>
+                    <div style="color: var(--dark); font-weight: 800; font-size: 12px; margin-top: 4px;">+100 бонусів</div>
+                  </div>
+                  <div>
+                    <div class="bonus-step-ico" style="background: white;">💻</div>
+                    <b style="font-size: 12px; display: block; height: 32px;">Допоможи онлайн</b>
+                    <div style="color: var(--dark); font-weight: 800; font-size: 12px; margin-top: 4px;">+30 бонусів</div>
+                  </div>
+                  <div>
+                    <div class="bonus-step-ico" style="background: white;">👥</div>
+                    <b style="font-size: 12px; display: block; height: 32px;">Запроси друга</b>
+                    <div style="color: var(--dark); font-weight: 800; font-size: 12px; margin-top: 4px;">+50 бонусів</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 16px;">Доступні знижки</h3>
+            <div class="discounts-grid">
+              <div class="discount-card">
+                <div>
+                  <h3 style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">Знижка 10%</h3>
+                  <p style="font-size: 12px; color: var(--gray-muted);">на товари для дітей у мережі «Дитячий світ»</p>
+                  <div style="font-size: 12px; font-weight: 700; color: var(--dark); margin-top: 10px;">Від 200 бонусів</div>
+                </div>
+                <button class="btn-coral" style="margin-top: 20px; justify-content: center; width: 100%;" onclick="redeemDiscount(this, 200)">Отримати</button>
+              </div>
+              <div class="discount-card">
+                <div>
+                  <h3 style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">Знижка 15%</h3>
+                  <p style="font-size: 12px; color: var(--gray-muted);">на медичні послуги у клініці «Здоров'я»</p>
+                  <div style="font-size: 12px; font-weight: 700; color: var(--dark); margin-top: 10px;">Від 300 бонусів</div>
+                </div>
+                <button class="btn-coral" style="margin-top: 20px; justify-content: center; width: 100%;" onclick="redeemDiscount(this, 300)">Отримати</button>
+              </div>
+              <div class="discount-card">
+                <div>
+                  <h3 style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">Знижка 20%</h3>
+                  <p style="font-size: 12px; color: var(--gray-muted);">на одяг у магазині «Ukrainian Brand»</p>
+                  <div style="font-size: 12px; font-weight: 700; color: var(--dark); margin-top: 10px;">Від 400 бонусів</div>
+                </div>
+                <button class="btn-coral" style="margin-top: 20px; justify-content: center; width: 100%;" onclick="redeemDiscount(this, 400)">Отримати</button>
+              </div>
+              <div class="discount-card" style="background: transparent; border: none; align-items: flex-start; justify-content: flex-start;">
+                <b style="font-size: 16px; margin-bottom: 6px;">Твоя допомога має значення</b>
+                <p style="font-size: 12px; color: var(--gray-muted); margin-bottom: 16px;">Разом ми допомагаємо досягнути потрібного.</p>
+                <div style="font-size: 32px;">🖤</div>
+              </div>
+            </div>
           </div>
 
+          <!-- 5.6: Налаштування (Знімок 10) -->
           <div id="cab-pane-settings" class="cab-pane-view" style="display: none;">
-            <h1 class="cab-page-title">Налаштування</h1>
-            <div id="settings-success-box" style="display: none; background: #f0fdf4; color: #15803d; padding: 12px; font-weight: 700; margin-bottom: 12px;">Збережено!</div>
-            <form onsubmit="saveProfileSettings(event)">
-              <div class="form-row-2">
-                <div class="form-group-item"><label>Ім'я</label><input type="text" id="set-name" class="input-volo"></div>
-                <div class="form-group-item"><label>Прізвище</label><input type="text" id="set-surname" class="input-volo"></div>
+            <h1 class="cab-page-title">Налаштування профілю</h1>
+            
+            <div id="settings-success-box" style="display: none; margin-bottom: 16px; color: #15803d; font-size: 13px; font-weight: 700; background: #f0fdf4; padding: 12px; border-radius: 8px; text-align: center;">Профіль успішно оновлено!</div>
+
+            <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 36px;">
+              <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 28px;">
+                <div class="cab-avatar-circle" id="settings-avatar" style="width: 70px; height: 70px; font-size: 24px;">АБ</div>
+                <button class="btn-coral" style="padding: 8px 18px;" onclick="alert('Виберіть фотографію на комп'ютері')">Завантажити нове фото</button>
+                <button class="btn-outline" style="border: none; color: var(--gray-muted);" onclick="alert('Фото видалено')">Видалити</button>
               </div>
-              <div class="form-group-item"><label>Email</label><input type="email" id="set-email" class="input-volo"></div>
-              <div class="form-group-item"><label>Місто</label><input type="text" id="set-city" class="input-volo"></div>
-              <button type="submit" class="btn-coral">Зберегти</button>
-            </form>
+
+              <form onsubmit="saveProfileSettings(event)">
+                <div class="form-row-2">
+                  <div class="form-group-item">
+                    <label>Ім'я</label>
+                    <input type="text" id="set-name" class="input-volo" value="Ангеліна">
+                  </div>
+                  <div class="form-group-item">
+                    <label>Місто</label>
+                    <input type="text" id="set-city" class="input-volo" value="Вінниця">
+                  </div>
+                </div>
+                <div class="form-row-2">
+                  <div class="form-group-item">
+                    <label>Прізвище</label>
+                    <input type="text" id="set-surname" class="input-volo" value="Борецька">
+                  </div>
+                  <div class="form-group-item">
+                    <label>Про себе</label>
+                    <input type="text" id="set-bio" class="input-volo" value="Студентка, допомагаю дітям та ВПО">
+                  </div>
+                </div>
+                <div class="form-row-2">
+                  <div class="form-group-item">
+                    <label>Email</label>
+                    <input type="email" id="set-email" class="input-volo" value="angelina@gmail.com">
+                  </div>
+                  <div class="form-group-item">
+                    <label>Пароль</label>
+                    <input type="password" class="input-volo" value="********">
+                  </div>
+                </div>
+                <div class="form-group-item" style="max-width: 48%;">
+                  <label>Телефон</label>
+                  <input type="text" id="set-phone" class="input-volo" value="+380 (97) 123 45 67">
+                </div>
+                <button type="submit" class="btn-coral" style="margin-top: 10px;">Зберегти зміни</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 6. БОНУСИ -->
+  <!-- ========================================================
+       6. БОНУСИ ПУБЛІЧНА СТОРІНКА (ВИПРАВЛЕНА ЗА МАКЕТОМ ЗНІМОК 6)
+       ======================================================== -->
   <section id="screen-bonuses" class="screen-view">
     <div class="container bonuses-page-layout">
+      <!-- Верхня сітка горизонтально -->
       <div class="bonus-top-grid">
         <div class="bonus-balance-card">
-          <small>Баланс бонусів</small>
+          <small style="color: #94a3b8; text-transform: uppercase; font-weight: 700;">Ваш баланс бонусів</small>
           <div class="bonus-balance-val" id="bonuses-live-val-public">320</div>
+          <p style="font-size: 13px; color: #cbd5e1; margin-top: 10px;">1 бонус = 1 гривня знижки у партнерів</p>
         </div>
-        <div style="text-align: center;">
-          <h2 style="font-size: 20px; font-weight: 800;">Запроси друга (+50 б.)</h2>
-          <button class="btn-outline" style="margin-top: 10px;" onclick="copyReferralLink(this)">Скопіювати лінк</button>
+
+        <div style="padding: 0 10px;">
+          <h2 style="font-size: 22px; font-weight: 900; margin-bottom: 24px; text-align: center; color: var(--dark-navy); background: #e0e7ff; display: inline-block; padding: 4px 12px; transform: translateX(35%);">Як отримати бонуси?</h2>
+          <div class="how-get-bonuses">
+            <div>
+              <div class="bonus-step-ico">📝</div>
+              <b style="font-size: 13px;">Подай заявку</b>
+              <div style="color: var(--primary); font-weight: 800; font-size: 12px; margin-top: 4px;">+50 бонусів</div>
+            </div>
+            <div>
+              <div class="bonus-step-ico">🤝</div>
+              <b style="font-size: 13px;">Візьми участь</b>
+              <div style="color: var(--primary); font-weight: 800; font-size: 12px; margin-top: 4px;">+100 бонусів</div>
+            </div>
+            <div>
+              <div class="bonus-step-ico">💻</div>
+              <b style="font-size: 13px;">Допоможи онлайн</b>
+              <div style="color: var(--primary); font-weight: 800; font-size: 12px; margin-top: 4px;">+30 бонусів</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-lg); padding: 30px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+          <div style="font-size: 32px; margin-bottom: 8px;">👥</div>
+          <b>Запроси друга</b>
+          <div style="color: var(--primary); font-weight: 800; margin: 4px 0 16px;">+50 бонусів</div>
+          <button class="btn-outline" style="padding: 8px 18px; font-size: 12px;" onclick="copyReferralLink(this)">Скопіювати лінк</button>
         </div>
       </div>
-      <h2 style="margin: 30px 0 20px;">Доступні знижки</h2>
+
+      <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 28px; font-weight: 900;">Доступні знижки</h2>
+        <a style="font-weight: 700; cursor: pointer;">Переглянути всі →</a>
+      </div>
+
+      <!-- Нижня сітка 4 колонки горизонтально -->
       <div class="discounts-grid">
         <div class="discount-card">
-          <h3>Знижка 10%</h3>
-          <p style="font-size: 12px; color: var(--gray-muted);">Дитячі товари (200 б.)</p>
-          <button class="btn-navy" style="margin-top: 20px;" onclick="redeemDiscount(this, 200)">Обміняти (200 б.)</button>
+          <div>
+            <span class="tag-badge" style="background: #fdf2f2; color: #ef4444;">Діти та сім'я</span>
+            <h3 style="font-size: 20px; font-weight: 900; margin: 8px 0;">Знижка 10%</h3>
+            <p style="font-size: 12px; color: var(--gray-muted);">на дитячі товари у мережі «Дитячий світ». Від 200 бонусів.</p>
+          </div>
+          <button class="btn-navy" style="margin-top: 24px; justify-content: center;" onclick="redeemDiscount(this, 200)">Обміняти (200 б.)</button>
         </div>
         <div class="discount-card">
-          <h3>Знижка 15%</h3>
-          <p style="font-size: 12px; color: var(--gray-muted);">Медичні послуги (300 б.)</p>
-          <button class="btn-navy" style="margin-top: 20px;" onclick="redeemDiscount(this, 300)">Обміняти (300 б.)</button>
+          <div>
+            <span class="tag-badge" style="background: #f0fdf4; color: #22c55e;">Здоров'я</span>
+            <h3 style="font-size: 20px; font-weight: 900; margin: 8px 0;">Знижка 15%</h3>
+            <p style="font-size: 12px; color: var(--gray-muted);">на медичні послуги у клініці «Здоров'я». Від 300 бонусів.</p>
+          </div>
+          <button class="btn-navy" style="margin-top: 24px; justify-content: center;" onclick="redeemDiscount(this, 300)">Обміняти (300 б.)</button>
         </div>
         <div class="discount-card">
-          <h3>Знижка 20%</h3>
-          <p style="font-size: 12px; color: var(--gray-muted);">Одяг (400 б.)</p>
-          <button class="btn-navy" style="margin-top: 20px;" onclick="redeemDiscount(this, 400)">Обміняти (400 б.)</button>
+          <div>
+            <span class="tag-badge" style="background: #eff6ff; color: #3b82f6;">Одяг</span>
+            <h3 style="font-size: 20px; font-weight: 900; margin: 8px 0;">Знижка 20%</h3>
+            <p style="font-size: 12px; color: var(--gray-muted);">на одяг у магазині «Ukrainian Brand». Від 400 бонусів.</p>
+          </div>
+          <button class="btn-navy" style="margin-top: 24px; justify-content: center;" onclick="redeemDiscount(this, 400)">Обміняти (400 б.)</button>
+        </div>
+        
+        <!-- Четверта картка (Чорне серце) -->
+        <div class="discount-card" style="background: transparent; border: none; padding-top: 40px;">
+          <h3 style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">Твоя допомога має значення</h3>
+          <p style="font-size: 13px; color: var(--gray-muted); margin-bottom: 20px;">Разом ми змінюємо українське суспільство.</p>
+          <div style="font-size: 40px; color: var(--dark-navy);">🖤</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 7. РЕЄСТРАЦІЯ З ВИБОРОМ РОЛІ -->
+  <!-- ========================================================
+       7. СПОНСОРИ
+       ======================================================== -->
+  <section id="screen-sponsors" class="screen-view">
+    <div class="container sponsors-layout">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h1 style="font-size: 38px; font-weight: 900; margin-bottom: 6px;">Наші спонсори</h1>
+          <p style="color: var(--gray-muted); font-size: 14px;">Дякуємо компаніям і людям, які підтримують волонтерів Вінниці та допомагають ініціативам рости.</p>
+        </div>
+        <div style="background: var(--primary); color: white; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; text-align: center; line-height: 1.2;">
+          ДЯКУЄМО<br>ЗА ПІДТРИМКУ
+        </div>
+      </div>
+
+      <div class="sponsor-block-title">Генеральні партнери</div>
+      <div class="sponsors-grid-3">
+        <div class="sponsor-card">
+          <div class="sponsor-logo-placeholder">LOGO</div>
+          <b>Vinnytsia IT Cluster</b>
+          <p style="font-size: 12px; color: var(--gray-muted); margin-top: 4px;">Генеральний технологічний партнер</p>
+        </div>
+        <div class="sponsor-card">
+          <div class="sponsor-logo-placeholder">LOGO</div>
+          <b>Фонд «Поділля Разом»</b>
+          <p style="font-size: 12px; color: var(--gray-muted); margin-top: 4px;">Гуманітарне фінансування та хаби</p>
+        </div>
+        <div class="sponsor-card">
+          <div class="sponsor-logo-placeholder">LOGO</div>
+          <b>Nova Poshta Humanitarian</b>
+          <p style="font-size: 12px; color: var(--gray-muted); margin-top: 4px;">Безкоштовна логістика гумдопомоги</p>
+        </div>
+      </div>
+
+      <div class="sponsor-block-title">Партнери</div>
+      <div class="sponsors-grid-4">
+        <div class="sponsor-card"><div class="sponsor-logo-placeholder" style="height: 60px;">LOGO</div><b>Вінницька міська рада</b><p style="font-size: 11px; color: var(--gray-muted);">Підтримка молоді</p></div>
+        <div class="sponsor-card"><div class="sponsor-logo-placeholder" style="height: 60px;">LOGO</div><b>Мережа «Аврора»</b><p style="font-size: 11px; color: var(--gray-muted);">Товари для притулків</p></div>
+        <div class="sponsor-card"><div class="sponsor-logo-placeholder" style="height: 60px;">LOGO</div><b>Кав'ярня «Чорний кіт»</b><p style="font-size: 11px; color: var(--gray-muted);">Бонуси за каву</p></div>
+        <div class="sponsor-card"><div class="sponsor-logo-placeholder" style="height: 60px;">LOGO</div><b>Клініка «Здоров'я»</b><p style="font-size: 11px; color: var(--gray-muted);">Медичний супровід</p></div>
+      </div>
+
+      <div class="sponsor-cta-banner">
+        <div>
+          <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 6px;">Станьте спонсором VOLOMAP</h2>
+          <p style="font-size: 13px; color: #94a3b8;">Підтримайте волонтерські ініціативи у Вінниці та отримайте видимість серед тисяч учасників.</p>
+        </div>
+        <button class="btn-coral" onclick="openSponsorModal()">Стати спонсором →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       8. ПРО НАС
+       ======================================================== -->
+  <section id="screen-about" class="screen-view">
+    <div class="container about-layout">
+      <div class="about-top-grid">
+        <div>
+          <h1 style="font-size: 38px; font-weight: 900; margin-bottom: 12px;">Про нас</h1>
+          <p style="font-size: 15px; color: var(--gray-muted); line-height: 1.6;">
+            VOLOMAP — це платформа, що об'єднує волонтерів, громадські організації та бізнес для допомоги тим, хто цього потребує.
+          </p>
+
+          <h3 style="font-size: 20px; font-weight: 800; margin-top: 32px;">Наша місія та цінності</h3>
+          <div class="values-cards-row">
+            <div class="value-box">
+              <div style="font-size: 24px; margin-bottom: 6px;">🔍</div>
+              <b>Прозорість</b>
+              <p style="font-size: 12px; color: var(--gray-muted); margin-top: 4px;">Ми віримо, що довіра будується на відкритому діалозі та прозорих звітах.</p>
+            </div>
+            <div class="value-box">
+              <div style="font-size: 24px; margin-bottom: 6px;">🤝</div>
+              <b>Взаємодія</b>
+              <p style="font-size: 12px; color: var(--gray-muted); margin-top: 4px;">Створюємо зручні умови для співпраці волонтерів та організацій.</p>
+            </div>
+            <div class="value-box">
+              <div style="font-size: 24px; margin-bottom: 6px;">🌅</div>
+              <b>Вплив</b>
+              <p style="font-size: 12px; color: var(--gray-muted); margin-top: 4px;">Кожна маленька дія наближає великі зміни й допомагає громадам.</p>
+            </div>
+            <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 18px; text-align: center;">
+              <b style="font-size: 28px; display: block; color: var(--primary);">6</b>
+              <small style="font-size: 11px; color: var(--gray-muted);">місяців роботи</small>
+              <b style="font-size: 20px; display: block; margin-top: 8px;">1 000+</b>
+              <small style="font-size: 10px; color: var(--gray-muted);">учасників</small>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 12px;">Наша команда</h3>
+          <div class="team-grid-2x2">
+            <div class="team-member-card">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" alt="Борецька Ангеліна">
+              <div class="team-info"><b>Борецька Ангеліна</b><span>Засновниця</span></div>
+            </div>
+            <div class="team-member-card">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300" alt="Вертепна Дарія">
+              <div class="team-info"><b>Вертепна Дарія</b><span>Технічний директор</span></div>
+            </div>
+            <div class="team-member-card">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="Опря Валентин">
+              <div class="team-info"><b>Опря Валентин</b><span>Соціальний директор</span></div>
+            </div>
+            <div class="team-member-card">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300" alt="Рибка Владислав">
+              <div class="team-info"><b>Рибка Владислав</b><span>Технічний директор</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-lg); padding: 28px 36px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 22px; font-weight: 900;">Хочете стати частиною нашої команди?</h2>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn-coral" onclick="navigateTo('screen-register')">Стати волонтером →</button>
+          <button class="btn-outline" onclick="navigateTo('screen-contact')">Зв'язатися з нами</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       9. СТАТИ ВОЛОНТЕРОМ / РЕЄСТРАЦІЯ (З ВИБОРОМ РОЛІ)
+       ======================================================== -->
   <section id="screen-register" class="screen-view">
     <div class="container register-split-box">
       <div>
-        <h1 style="font-size: 40px; font-weight: 900; margin-bottom: 12px;">Стати волонтером</h1>
-        <p style="color: var(--gray-muted);">Долучайтеся до спільноти або публікуйте власні ініціативи у Вінниці.</p>
+        <h1 style="font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 16px;">Стати волонтером</h1>
+        <p style="font-size: 15px; color: var(--gray-muted);">Долучайтесь до спільноти VOLOMAP: знаходьте ініціативи у Вінниці, подавайте заявки та отримуйте бонуси за допомогу. Організатори можуть створювати власні збори.</p>
+
+        <div class="reg-benefits-list">
+          <div class="reg-benefit-item">
+            <div class="reg-ico">🔍</div>
+            <div><b>Знаходьте ініціативи</b><p style="font-size: 13px; color: var(--gray-muted);">Мапа актуальних зборів і заходів поруч із вами.</p></div>
+          </div>
+          <div class="reg-benefit-item">
+            <div class="reg-ico">📝</div>
+            <div><b>Подавайте заявку за хвилину</b><p style="font-size: 13px; color: var(--gray-muted);">Одна форма для всіх волонтерських ініціатив.</p></div>
+          </div>
+          <div class="reg-benefit-item">
+            <div class="reg-ico">🎁</div>
+            <div><b>Отримуйте бонуси</b><p style="font-size: 13px; color: var(--gray-muted);">Обмінюйте години волонтерства на знижки.</p></div>
+          </div>
+        </div>
       </div>
-      <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-lg); padding: 36px;">
-        <h2 style="margin-bottom: 20px;">Реєстрація</h2>
+
+      <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-md);">
+        <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Створити акаунт</h2>
+        
+        <!-- ВИБІР РОЛІ (ОРГАНІЗАТОР чи ВОЛОНТЕР) -->
         <div style="display: flex; gap: 20px; margin-bottom: 20px; background: var(--gray-light); padding: 12px; border-radius: 8px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 700;">
             <input type="radio" name="role" value="volunteer" checked> Я волонтер
@@ -419,21 +940,195 @@
             <input type="radio" name="role" value="organizer"> Я організатор / Фонд
           </label>
         </div>
+
         <form onsubmit="handleRegistration(event)">
           <div class="form-row-2">
-            <div class="form-group-item"><label>Ім'я *</label><input type="text" id="reg-name" class="input-volo" required></div>
-            <div class="form-group-item"><label>Прізвище *</label><input type="text" id="reg-surname" class="input-volo" required></div>
+            <div class="form-group-item"><label>Ім'я *</label><input type="text" id="reg-name" class="input-volo" required placeholder="Введіть ім'я"></div>
+            <div class="form-group-item"><label>Прізвище *</label><input type="text" id="reg-surname" class="input-volo" required placeholder="Введіть прізвище"></div>
           </div>
-          <div class="form-group-item"><label>Email *</label><input type="email" id="reg-email" class="input-volo" required></div>
-          <div class="form-group-item"><label>Місто</label><input type="text" id="reg-city" class="input-volo" value="Вінниця"></div>
-          <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px; margin-top: 10px;">Зареєструватися →</button>
+          <div class="form-group-item"><label>Email *</label><input type="email" id="reg-email" class="input-volo" required placeholder="Введіть email"></div>
+          <div class="form-group-item"><label>Телефон</label><input type="text" class="input-volo" placeholder="+380 (__) ___-__-__"></div>
+          <div class="form-group-item">
+            <label>Місто</label>
+            <select class="input-volo" id="reg-city"><option>Вінниця</option><option>Київ</option><option>Львів</option></select>
+          </div>
+          <div class="form-group-item">
+            <label>Пароль *</label>
+            <input type="password" class="input-volo" required placeholder="••••••••">
+          </div>
+          <div class="checkbox-agree">
+            <input type="checkbox" id="reg-agree" required checked>
+            <label for="reg-agree">Я погоджуюсь на обробку персональних даних</label>
+          </div>
+          <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px;">Зареєструватися →</button>
+          <p style="font-size: 13px; text-align: center; margin-top: 14px; color: var(--gray-muted);">
+            Вже є акаунт? <a style="color: var(--primary); font-weight: 700; cursor: pointer;" onclick="navigateTo('screen-login')">Увійти</a>
+          </p>
         </form>
       </div>
     </div>
   </section>
 
-  <!-- Leaflet JS -->
+  <!-- ========================================================
+       10. ВХІД 
+       ======================================================== -->
+  <section id="screen-login" class="screen-view">
+    <div class="container">
+      <div class="login-container-center">
+        <div class="brand-icon-box" style="margin: 0 auto 12px; width: 44px; height: 44px; font-size: 22px;">🤝</div>
+        <h1 style="font-size: 28px; font-weight: 900; margin-bottom: 4px;">Вхід</h1>
+        <p style="font-size: 13px; color: var(--gray-muted); margin-bottom: 24px;">Раді бачити вас знову! Увійдіть, щоб подати заявку.</p>
+
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group-item" style="text-align: left;">
+            <label>Email</label>
+            <input type="email" class="input-volo" value="angelina@gmail.com" required>
+          </div>
+          <div class="form-group-item" style="text-align: left;">
+            <label>Пароль</label>
+            <input type="password" class="input-volo" value="password123" required>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px;">
+            <label><input type="checkbox" checked> Запам'ятати мене</label>
+            <a style="color: var(--gray-muted); text-decoration: none;" onclick="alert('Посилання на відновлення надіслано')">Забули пароль?</a>
+          </div>
+          <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 12px;">Увійти →</button>
+        </form>
+
+        <div style="margin: 20px 0; font-size: 12px; color: var(--gray-muted);">або</div>
+        <button class="btn-outline" style="width: 100%; justify-content: center;" onclick="handleLogin(event)">Продовжити з Google</button>
+        <p style="font-size: 12px; color: var(--gray-muted); margin-top: 16px;">
+          Немає акаунту? <a style="color: var(--primary); font-weight: 700; cursor: pointer;" onclick="navigateTo('screen-register')">Стати волонтером</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       11. ЗВ'ЯЗАТИСЯ З НАМИ
+       ======================================================== -->
+  <section id="screen-contact" class="screen-view">
+    <div class="container contact-split-box">
+      <div>
+        <h1 style="font-size: 42px; font-weight: 900; margin-bottom: 12px;">Зв'язатися з нами</h1>
+        <p style="color: var(--gray-muted); font-size: 14px; margin-bottom: 28px;">Маєте питання про платформу чи хочете стати партнером? Напишіть нам — відповімо протягом доби.</p>
+
+        <div class="contact-info-card">
+          <small style="color: var(--gray-muted); font-size: 11px; text-transform: uppercase;">📍 Адреса</small>
+          <b>м. Вінниця, вул. Соборна, 25</b>
+        </div>
+        <div class="contact-info-card">
+          <small style="color: var(--gray-muted); font-size: 11px; text-transform: uppercase;">✉️ Email</small>
+          <b>hello@volomap.ua</b>
+        </div>
+        <div class="contact-info-card">
+          <small style="color: var(--gray-muted); font-size: 11px; text-transform: uppercase;">☎️ Телефон</small>
+          <b>+38 (067) 125 45 07</b>
+        </div>
+        <div class="contact-info-card">
+          <small style="color: var(--gray-muted); font-size: 11px; text-transform: uppercase;">⏱️ Години роботи</small>
+          <b>Пн-Пт, 09:00–18:00</b>
+        </div>
+      </div>
+
+      <div style="background: white; border: 1px solid var(--gray-border); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-md);">
+        <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Надішліть повідомлення</h2>
+        <form onsubmit="handleContactSubmit(event)">
+          <div class="form-group-item"><label>Ім'я *</label><input type="text" class="input-volo" required placeholder="Введіть ім'я"></div>
+          <div class="form-group-item"><label>Email *</label><input type="email" class="input-volo" required placeholder="Введіть email"></div>
+          <div class="form-group-item"><label>Тема</label><select class="input-volo"><option>Загальне питання</option><option>Спонсорство та партнерство</option><option>Додати нову ініціативу</option></select></div>
+          <div class="form-group-item"><label>Повідомлення</label><textarea class="input-volo" rows="4" placeholder="Ваше повідомлення..."></textarea></div>
+          <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px;">Надіслати →</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       12. МОДАЛЬНЕ ВІКНО: ЯК ЦЕ ПРАЦЮЄ
+       ======================================================== -->
+  <div class="modal-how-backdrop" id="modalHowItWorks">
+    <div class="modal-how-card">
+      <button class="modal-close-x" onclick="closeHowItWorksModal()">✕</button>
+      <h2 style="font-size: 28px; font-weight: 900; margin-bottom: 4px;">Як це працює</h2>
+      <p style="color: var(--gray-muted); font-size: 13px;">Прості кроки, щоб почати допомагати або знайти підтримку</p>
+
+      <div class="modal-video-grid">
+        <div class="video-mock-box" onclick="alert('Відтворення навчального відео VOLOMAP...')">
+          <div class="play-circle-btn">▶</div>
+          <span style="position: absolute; bottom: 12px; font-size: 11px; opacity: 0.8;">Відео-інструкція: Волонтерство з VOLOMAP</span>
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: space-around;">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: #fdf2f0; display: flex; align-items: center; justify-content: center; font-size: 14px;">📍</div>
+            <div><b style="font-size: 14px;">1. Знайдіть ініціативу</b><p style="font-size: 12px; color: var(--gray-muted);">Оберіть актуальний збір або захід на мапі або у списку.</p></div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; font-size: 14px;">📝</div>
+            <div><b style="font-size: 14px;">2. Подайте заявку</b><p style="font-size: 12px; color: var(--gray-muted);">Заповніть швидку форму, щоб долучитися до волонтерства.</p></div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 14px;">🎁</div>
+            <div><b style="font-size: 14px;">3. Отримуйте бонуси</b><p style="font-size: 12px; color: var(--gray-muted);">Накопичуйте волонтерські години та обмінюйте їх на знижки.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn-outline" onclick="closeHowItWorksModal()">Закрити</button>
+        <button class="btn-coral" onclick="closeHowItWorksModal(); navigateTo('screen-map');">Зрозуміло, перейти до пошуку →</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- МОДАЛЬНЕ ВІКНО: СТАТИ СПОНСОРОМ (ПОМИЛКА 5) -->
+  <div class="modal-how-backdrop" id="modalSponsor">
+    <div class="modal-how-card" style="max-width: 500px;">
+      <button class="modal-close-x" onclick="closeSponsorModal()">✕</button>
+      <h2 style="font-size: 28px; font-weight: 900; margin-bottom: 4px;">Стати спонсором</h2>
+      <p style="color: var(--gray-muted); font-size: 13px; margin-bottom: 24px;">Заповніть форму, і ми зв'яжемося з вами щодо партнерства.</p>
+      
+      <form onsubmit="handleSponsorSubmit(event)">
+        <div class="form-group-item"><label>Назва компанії / організації</label><input type="text" class="input-volo" required placeholder="ТОВ «Компанія»"></div>
+        <div class="form-group-item"><label>Контактна особа</label><input type="text" class="input-volo" required placeholder="ПІБ"></div>
+        <div class="form-group-item"><label>Телефон або Email</label><input type="text" class="input-volo" required placeholder="Контакт для зв'язку"></div>
+        <div class="form-group-item">
+            <label>Формат підтримки</label>
+            <select class="input-volo">
+                <option>Фінансова допомога</option>
+                <option>Логістика та транспорт</option>
+                <option>Гуманітарна допомога</option>
+                <option>Надання знижок для бонусів</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-coral" style="width: 100%; justify-content: center; padding: 14px; margin-top: 10px;">Надіслати запит →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 20px;">🤝</span>
+        <b>VOLOMAP</b>
+      </div>
+      <div class="footer-links">
+        <a onclick="navigateTo('screen-home')">Головна</a>
+        <a onclick="navigateTo('screen-map')">Мапа ініціатив</a>
+        <a onclick="navigateTo('screen-bonuses')">Бонуси</a>
+        <a onclick="navigateTo('screen-cabinet')">Особистий кабінет</a>
+        <a onclick="navigateTo('screen-sponsors')">Спонсори</a>
+        <a onclick="navigateTo('screen-about')">Про нас</a>
+      </div>
+      <p style="font-size: 12px; color: #94a3b8;">Підтримка. Допомога. Разом. 💙💛 © 2026</p>
+    </div>
+  </footer>
+
+  <!-- Leaflet JS для карти -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="script.js"></script>
+  <!-- Власний скрипт -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
