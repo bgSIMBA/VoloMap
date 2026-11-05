@@ -22,7 +22,7 @@ const initiatives = [
   { id: 3, title: "Збір продуктів для ВПО", category: "Продукти", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(7)}`, targetDate: getFutureDate(7), difficulty: "Легко", image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500", address: "м. Вінниця, Хмельницьке шосе, 14", coords: [49.238, 28.455] },
   { id: 4, title: "Підтримка літніх людей у Вінниці", category: "Допомога людям", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(12)}`, targetDate: getFutureDate(12), difficulty: "Складно", image: "photo_2026-11-05_21-09-49.jpg", address: "м. Вінниця, вул. Келецька, 82", coords: [49.225, 28.420] },
   { id: 5, title: "Прибирання територій після обстрілів", category: "Екологія", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(15)}`, targetDate: getFutureDate(15), difficulty: "Середньо", image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500", address: "м. Вінниця, Замостянський район", coords: [49.245, 28.489] },
-  { id: 6, title: "Теплі речі для ВПО", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(20)}`, targetDate: getFutureDate(20), difficulty: "Легко", image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=500", address: "м. Вінниця, вул. Пирогова, 47", coords: [49.229, 28.450] }
+  { id: 6, title: "Теплі речі для ВПО", category: "Збір речей", city: "Вінниця", format: "Офлайн", date: `До ${getFutureDate(20)}`, targetDate: getFutureDate(20), difficulty: "Легко", image: "photo_2026-11-05_21-09-54.jpg", address: "м. Вінниця, вул. Пирогова, 47", coords: [49.229, 28.450] }
 ];
 
 // ЗАЯВКИ ВОЛОНТЕРА
